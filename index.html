@@ -341,7 +341,7 @@
                 <label class="segmented-control"><input type="checkbox" id="theme-toggle" onchange="toggleTheme()" class="seg-cb"><div class="seg-slider"></div><div class="seg-option opt-left">Light</div><div class="seg-option opt-right">Dark</div></label>
                 <label class="segmented-control"><input type="checkbox" id="color-toggle" onchange="toggleColorMode()" class="seg-cb"><div class="seg-slider"></div><div class="seg-option opt-left">Operator Color</div><div class="seg-option opt-right">Layer Color</div></label>
                 <div class="export-row">
-                    <button class="export-btn" onclick="exportDOC()">📄 Export Word List</button>
+                    <button class="export-btn" onclick="shareUpdatedCode()">🔗 Share Updated Code</button>
                     <button class="export-btn" onclick="window.print()">🖨️ Print Blueprint</button>
                 </div>
                 <button onclick="resetData()" class="reset-btn" style="margin-top: 5px;">Reset System Cache</button>
@@ -1177,11 +1177,14 @@
             location.reload();
         }
     }
-    function exportDOC() {
-        let text = "";
-        allEvents.forEach(e => text += `[${e.start}] ${e.title} (${e.project})\n`);
-        const blob = new Blob([text], {type: "text/plain;charset=utf-8"});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "Operational_Blueprint.txt"; a.click();
+    function shareUpdatedCode() {
+        const entireCodeString = document.documentElement.outerHTML;
+        const finalDocumentString = "<!DOCTYPE html>\n" + entireCodeString;
+        const blob = new Blob([finalDocumentString], {type: "text/plain;charset=utf-8"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "index.html";
+        a.click();
     }
 
     window.onload = () => { loadSavedData(); };
