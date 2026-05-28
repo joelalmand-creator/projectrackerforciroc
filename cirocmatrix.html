@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en" style="--bar-bg: #111111; --bar-img: none;"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ciroc Matrix Timelines</title>
+<link id="app-favicon" rel="icon" type="image/png" href="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/all-icons/calendar-hxx1j6ge7nbk1xlqmfl5w9.png/calendar-xoaigr9z259n0zw0pl1c.png">
+
+<style>
+    /* BRAND COLORS & GLOBAL OVERRIDE */
+    :root {
+        --c-black: #000000; --c-white: #FFFFFF; --c-saddle: #1e3a8a; --c-parchment: #EAE4DC;
+        --c-yellow: #EFBC40; --c-green: #099D69; --c-orange: #E78D4C; --c-pink: #E4818D;
+        --bar-bg: var(--c-black); --bar-img: none;
+    }
+
+    :root { --saddle-text: #ffffff; }
+    .btn-upload[style*="var(--c-saddle)"], .tab:hover, .list-view-btn:hover, .add-task-btn:hover, .filter-item:hover, .seg-option:hover, .export-btn:hover, .project-copy-btn:hover, .task-edit-btn:hover, .btn-edit:hover, .btn-save:hover, .ctx-item:hover { color: var(--saddle-text) !important; }
+    .dark-mode .color-picker-row { border-top-color: #444 !important; }
+    .dark-mode .color-picker-row label { color: #aaa !important; }
+
+    * { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important; box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #f4f5f7; display: flex; flex-direction: column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; color: #111; }
+    
+    /* INPUT UPLOAD OVERLAY */
+    .upload-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(244, 245, 247, 0.98); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow-y: auto; padding: 20px; }
+    .upload-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 12px 35px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border: 1px solid var(--c-parchment); }
+    .upload-box h1 { margin-top: 0; font-size: 20px; color: var(--c-black); letter-spacing: -0.5px;}
+    .upload-box p { color: #555; font-size: 13px; line-height: 1.5; margin-bottom: 20px;}
+    .import-row { display: flex; gap: 10px; margin-bottom: 10px; width: 100%; }
+    .paste-input-field { padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1; width: 100%; font-size: 12px; color: #333; outline: none; transition: 0.2s;}
+    .paste-input-field:focus { border-color: var(--c-saddle); }
+    .paste-area { width: 100%; height: 90px; margin-bottom: 10px; border-radius: 4px; padding: 10px; border: 1px solid #ccc; font-size: 12px; resize: vertical; outline: none; transition: 0.2s;}
+    .paste-area:focus { border-color: var(--c-saddle); }
+
+    .btn-upload { border: none; padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 8px; transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .btn-upload:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); filter: brightness(1.05); }
+    .btn-skip { background: transparent; color: #888; border: none; padding: 10px; font-size: 12px; font-weight: bold; cursor: pointer; text-decoration: underline;}
+    .btn-skip:hover { color: var(--c-saddle); }
+
+    /* CUSTOM MULTI-SELECT DROPDOWN */
+    .multi-select-dropdown { position: relative; width: 100%; flex: 1; text-align: left; }
+    .multi-select-header { padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: #fff; font-size: 12px; color: #333; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: 0.2s;}
+    .multi-select-header:hover { border-color: var(--c-saddle); }
+    .multi-select-panel { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ccc; border-top: none; border-radius: 0 0 4px 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); max-height: 180px; overflow-y: auto; z-index: 10000; display: none; flex-direction: column; }
+    .multi-select-panel.open { display: flex; }
+    .multi-select-item { padding: 6px 10px; display: flex; align-items: center; gap: 8px; font-size: 11px; cursor: pointer; transition: 0.1s;}
+    .multi-select-item:hover { background: #f4f5f7; }
+    .multi-select-add { padding: 8px; border-top: 1px solid #eee; display: flex; gap: 5px; background: #fafafa; position: sticky; bottom: 0;}
+
+    /* GLOBAL TOP BAR */
+    .top-bar-container { display: flex; flex-direction: column; background-color: var(--bar-bg) !important; background-image: var(--bar-img) !important; background-size: cover; background-position: center; border-bottom: 1px solid #ddd; padding: 15px 20px 0 20px; flex-shrink: 0; z-index: 100; transition: border-color 0.3s; }
+    .app-header { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-start; }
+    .app-title { font-size: 18px; font-weight: 900; color: var(--c-black); letter-spacing: 0.5px; text-transform: uppercase; line-height: 1.2; }
+    .app-subtitle { font-size: 10px; color: #888; font-weight: 300; text-transform: lowercase; }
+    .top-bar-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .top-bar-left { display: flex; gap: 15px; align-items: center; }
+    .hamburger-btn { background: transparent; border: none; cursor: pointer; color: #555; padding: 4px; display: flex; align-items: center; justify-content: center; transition: 0.2s; border-radius: 4px; }
+    .hamburger-btn:hover { color: var(--c-black); background: var(--c-parchment); }
+
+    .tabs-container { display: flex; align-items: center; gap: 8px; width: 100%; overflow: hidden; }
+    .tabs { display: flex; gap: 4px; overflow-x: auto; flex-shrink: 1; white-space: nowrap; padding-bottom: 0;}
+    .tab { flex-shrink: 0; padding: 5px 10px; background: #f4f5f7; border: 1px solid #ddd; border-bottom: none; border-radius: 4px 4px 0 0; cursor: pointer; font-size: 11px; font-weight: bold; color: #666; transition: 0.2s; user-select: none; }
+    .tab:hover { background: var(--c-saddle); color: var(--c-white); border-color: var(--c-saddle); }
+    .tab.active { background: white; color: var(--c-black); border-bottom: 1px solid white; margin-bottom: -1px; z-index: 2; position: relative; border-top: 2px solid var(--c-saddle);}
+
+    .nav-controls { display: flex; align-items: center; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 1px; }
+    .nav-arrow { background: none; border: none; font-size: 10px; cursor: pointer; color: #555; padding: 3px 6px; border-radius: 2px; transition: 0.2s;}
+    .nav-arrow:hover { background: var(--c-parchment); color: var(--c-black); }
+    .nav-label { font-size: 10px; font-weight: bold; color: #333; margin: 0 6px; min-width: 140px; text-align: center; }
+
+    .view-toggles { display: flex; background: #eee; border-radius: 4px; padding: 2px; }
+    .view-btn { background: transparent; border: none; padding: 5px 10px; font-size: 11px; font-weight: bold; color: #555; border-radius: 3px; cursor: pointer; transition: 0.2s;}
+    .view-btn.active { background: white; color: var(--c-saddle); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    
+    /* APP BODY */
+    .app-body { display: flex; gap: 15px; flex-grow: 1; padding: 15px 20px 20px 20px; overflow: hidden; position: relative; background: #f4f5f7; }
+    .sidebar { width: 240px; background: white; border: 1px solid #ddd; border-radius: 6px; height: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.03); flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; transition: width 0.3s ease, opacity 0.3s ease; }
+    .sidebar.collapsed { width: 0; border: none; opacity: 0; margin-right: -15px; pointer-events: none; }
+    .sidebar-scrollable { padding: 12px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; }
+    .sidebar h3 { margin-top: 0; font-size: 11px; border-bottom: 1px solid #eee; padding-bottom: 6px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center;}
+    
+    .assignee-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; }
+    .filter-item { display: flex; align-items: center; padding: 4px 6px; background: #fff; border: 1px solid transparent; border-radius: 4px; font-size: 11px; font-weight: bold; color: #444; cursor: pointer; transition: all 0.15s; }
+    .filter-item:hover { background: var(--c-saddle); color: var(--c-white); }
+    .filter-item input[type="checkbox"] { margin-right: 6px; cursor: pointer; accent-color: #555; }
+    .filter-item .swatch { width: 12px; height: 12px; border-radius: 2px; margin-right: 8px; border: 1px solid rgba(0,0,0,0.2); flex-shrink: 0; }
+    .filter-actions { display: flex; gap: 10px; margin-bottom: 8px; }
+    .action-link { font-size: 10px; color: #555; cursor: pointer; text-decoration: none; font-weight: bold;}
+    .action-link:hover { color: var(--c-saddle); text-decoration: underline; }
+    .add-btn { background: none; border: none; color: #888; font-size: 16px; font-weight: bold; cursor: pointer; padding: 0; transition: 0.2s;}
+
+    /* REFACTORED SIDEPANEL CHECKLIST BOX ARCHITECTURE */
+    .global-notes-container { margin-top: auto; display: flex; flex-direction: column; flex-grow: 1; min-height: 200px; max-height: 290px; padding-top: 10px; border-top: 1px solid #eee; }
+    .scratch-input-row { display: flex; gap: 5px; margin-bottom: 8px; }
+    .scratch-add-btn { background: var(--c-saddle); color: white; border: none; padding: 0 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
+    .scratch-list-scroller { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; text-align: left; }
+    .scratch-item { display: flex; align-items: center; justify-content: space-between; background: #fafafa; border: 1px solid #eee; border-radius: 4px; padding: 5px 8px; font-size: 11px; }
+    .scratch-item-left { display: flex; align-items: center; gap: 6px; flex-grow: 1; overflow: hidden; }
+    .scratch-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: bold; color: #333; }
+    .scratch-item.completed .scratch-text { text-decoration: line-through; opacity: 0.5; color: #888; }
+    .scratch-del-btn { background: transparent; border: none; color: #ff0000; font-weight: bold; cursor: pointer; font-size: 12px; padding: 0 4px; }
+
+    .settings-panel { padding: 12px; border-top: 1px solid #ddd; display: flex; flex-direction: column; font-size: 11px; background: #fafafa; flex-shrink: 0; }
+    .settings-panel h4 { margin: 0; font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; padding: 4px 8px; border-radius: 4px; }
+    .settings-panel h4:hover { background: var(--c-saddle); color: var(--c-white) !important; }
+    #settings-content { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+
+    .segmented-control { position: relative; display: flex; width: 100%; background: #e2e6ea; border-radius: 15px; padding: 2px; cursor: pointer; }
+    .seg-cb { display: none; }
+    .seg-option { flex: 1; text-align: center; font-size: 9px; font-weight: bold; padding: 5px 0; z-index: 2; color: #666; transition: color 0.3s; text-transform: uppercase; }
+    .seg-slider { position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: transform 0.3s; z-index: 1; }
+    .seg-cb:not(:checked) ~ .opt-left { color: #111; }
+    .seg-cb:checked ~ .opt-right { color: #111; }
+    .seg-cb:checked ~ .seg-slider { transform: translateX(100%); }
+    .export-row { display: flex; justify-content: space-between; gap: 4px; margin-top: 4px; }
+    .export-btn { flex: 1; background: #fff; border: 1px solid #ccc; color: #333; padding: 5px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; text-align: center; }
+    .export-btn:hover { background: var(--c-saddle); color: var(--c-white); border-color: var(--c-saddle); }
+    .reset-btn { background: none; border: none; color: #888; font-size: 10px; cursor: pointer; text-decoration: underline; padding: 0; }
+
+    /* Main Grid & Matrix Wrapper */
+    .main-content { flex-grow: 1; display: flex; flex-direction: column; min-width: 0; height: 100%; background: white; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
+    .calendar-container { flex-grow: 1; overflow-y: auto; position: relative; display: block; scroll-behavior: smooth;}
+    .grid-header { display: grid; background: #fff; border-bottom: 2px solid #ddd; position: sticky; top: 0; z-index: 100; height: 40px; align-items: center;}
+    .grid-cell { padding: 0 10px; border-right: 1px solid #e0e0e0; text-align: center; font-weight: bold; font-size: 11px; color: #555; display: flex; align-items: center; justify-content: center; height: 100%; text-transform: uppercase;}
+    .grid-cell:last-child { border-right: none; }
+    
+    .week-row { position: relative; border-bottom: 1px solid #e0e0e0; min-height: 80px; display: flex; flex-direction: column; }
+    .week-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: grid; pointer-events: none; }
+    .day-col { border-right: 1px solid #e0e0e0; position: relative; background: #fff; }
+    .day-col:last-child { border-right: none; }
+    .week-content { position: relative; margin-left: 120px; display: grid; grid-auto-rows: 24px; gap: 2px; padding: 20px 4px 6px 4px; flex-grow: 1; }
+
+    .event { padding: 0 6px; font-size: 11px; font-weight: bold; color: #111; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; border-radius: 3px; display: flex; align-items: center; height: 100%; transition: transform 0.15s; }
+    .event:hover { z-index: 10; filter: brightness(0.9); box-shadow: 0 3px 6px rgba(0,0,0,0.15); transform: translateY(-1px);}
+    .event.shoot { border-left: 3px solid #ff0000; font-style: italic; }
+    .event.ooo { color: #555; font-style: italic; opacity: 0.8; }
+
+    /* SLIDE-OUT PANEL */
+    .wiki-panel { position: absolute; top: 15px; right: 20px; bottom: 20px; width: 340px; background: white; border: 1px solid #ddd; border-radius: 6px; box-shadow: -5px 0 25px rgba(0,0,0,0.15); z-index: 99; display: none; flex-direction: column; overflow: hidden; }
+    .wiki-header { background: var(--c-saddle); color: white; padding: 12px 15px; font-size: 12px; font-weight: bold; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+    .wiki-close { background: none; border: none; color: white; font-size: 16px; cursor: pointer; font-weight: bold; }
+    .wiki-content-area { padding: 15px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
+    .wiki-project-card { border-left: 4px solid var(--c-saddle); padding-left: 10px; margin-bottom: 5px; text-align: left; }
+    .wiki-project-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
+    .wiki-project-title { font-size: 11px; font-weight: bold; text-transform: uppercase; color: var(--c-black); margin: 0; flex-grow: 1; }
+    .wiki-deck-link-emoji { font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; background: #333; color: #fff; padding: 2px 6px; border-radius: 3px; font-weight: bold; user-select: none; border: none;}
+    .wiki-deck-link-emoji:hover { background: var(--c-saddle); }
+    .wiki-launch-btn { font-size: 10px; font-weight: bold; color: var(--c-white); background: #099D69; border: none; border-radius: 3px; padding: 2px 6px; text-decoration: none; display: inline-flex; align-items: center; }
+    .wiki-meta-selectors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; }
+    .wiki-dropdown-field { background: #fff; border: 1px solid #ddd; padding: 4px; border-radius: 3px; font-size: 10px; font-weight: bold; color: #333; cursor: pointer; outline: none; width: 100%; appearance: none; }
+    .wiki-project-desc-input { width: 100%; height: 60px; font-size: 11px; color: #555; line-height: 1.4; border: 1px solid #eee; border-radius: 4px; padding: 5px; resize: none; outline: none; }
+
+    /* MODAL ARCHITECTURE */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: none; justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 25px; border-radius: 6px; width: 400px; max-height: 90vh; overflow-y: auto; position: relative; }
+    .modal-close { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: #888; }
+    .form-group { margin-bottom: 10px; text-align: left; }
+    .form-group label { display: block; font-size: 11px; font-weight: bold; color: #555; margin-bottom: 4px; text-transform: uppercase;}
+    .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; outline: none; }
+    .assignee-checkboxes { display: flex; flex-wrap: wrap; gap: 6px; }
+    .assignee-checkboxes label { font-weight: normal; font-size: 11px; display: flex; align-items: center; color: #555; }
+    .btn-save { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; width: 100%; margin-top: 10px; }
+    .btn-delete { background: white; color: #555; border: 1px solid #ccc; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; width: 100%; margin-top: 10px; }
+
+    /* VISUAL ACTION NOTIFICATION TOAST POPUP UI Element */
+    .undo-redo-toast { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: #222; border: 1px solid var(--c-saddle); color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: bold; z-index: 99999; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: none; pointer-events: none; letter-spacing: 0.5px; }
+
+    /* DARK MODE STYLESHEET RE-ANCHORED */
+    body.dark-mode { background: #121212 !important; color: #e0e0e0 !important; }
+    body.dark-mode .app-body { background: #121212 !important; }
+    body.dark-mode .top-bar-container { border-color: #333 !important; }
+    body.dark-mode .app-title { color: #eee !important; }
+    body.dark-mode .sidebar, 
+    body.dark-mode .settings-panel, 
+    body.dark-mode .main-content, 
+    body.dark-mode .upload-box, 
+    body.dark-mode .modal-content, 
+    body.dark-mode .wiki-panel { background: #1e1e1e !important; border-color: #333 !important; color: #e0e0e0 !important; }
+    body.dark-mode .grid-header { background: #181818 !important; border-color: #333 !important; color: #ccc !important; }
+    body.dark-mode .day-col { background: #1e1e1e !important; border-color: #333 !important; }
+    body.dark-mode .week-row { border-color: #333 !important; }
+    body.dark-mode .tab { background: #2a2a2a !important; color: #888 !important; border-color: #444 !important; }
+    body.dark-mode .tab.active { background: #1e1e1e !important; color: #fff !important; border-top-color: var(--c-saddle) !important; border-bottom-color: #1e1e1e !important; }
+    body.dark-mode .filter-item { background: #2a2a2a !important; border-color: #444 !important; color: #ccc !important; }
+    body.dark-mode .export-btn { background: #2a2a2a !important; border-color: #444 !important; color: #ccc !important; }
+    body.dark-mode .view-toggles { background: #2a2a2a !important; }
+    body.dark-mode .view-btn.active { background: var(--c-saddle) !important; color: var(--c-white) !important; }
+    body.dark-mode input[type="text"], body.dark-mode input[type="date"], body.dark-mode select, body.dark-mode textarea { background: #333 !important; border-color: #555 !important; color: #fff !important; }
+    body.dark-mode .segmented-control { background: #111 !important; }
+    body.dark-mode .seg-slider { background: #333 !important; }
+    body.dark-mode .seg-cb:not(:checked) ~ .opt-left, body.dark-mode .seg-cb:checked ~ .opt-right { color: #fff !important; }
+    body.dark-mode .upload-overlay { background: rgba(18, 18, 18, 0.95) !important; }
+    body.dark-mode .wiki-project-title { color: #fff !important; }
+    body.dark-mode .wiki-dropdown-field, body.dark-mode .wiki-project-desc-input { background: #2a2a2a !important; color: #ccc !important; border-color: #444 !important; }
+    body.dark-mode .wiki-project-desc-input:focus { border-color: var(--c-saddle) !important; color: #fff !important; }
+    body.dark-mode .nav-controls { background: #2a2a2a !important; border-color: #444 !important; }
+    body.dark-mode .nav-arrow { color: #ccc !important; }
+    body.dark-mode .nav-label { color: #fff !important; }
+    body.dark-mode .scratch-item { background: #2a2a2a !important; border-color: #444 !important; }
+</style>
+</head>
+<body class="dark-mode">
+
+<div id="setup-overlay" class="upload-overlay" style="display: none;">
+    <div class="upload-box">
+        <div id="setup-step-1">
+            <h1 style="margin-bottom: 5px;">Welcome to Ciroc OpsHub!</h1>
+            <p>Let's confirm your timeline workspace settings.</p>
+            <div class="form-group"><label>Brand Platform Name</label><input type="text" id="setup-brand" class="paste-input-field" value="CIROC"></div>
+            <div class="form-group"><label>Calendar Tracker Horizon Year</label><input type="text" id="setup-year" class="paste-input-field" value="2026"></div>
+            <button class="btn-upload" onclick="setupNext(2)" style="background: var(--c-saddle); color:white;">Next: Custom Aesthetics</button>
+        </div>
+    </div>
+</div>
+
+<div id="context-menu" class="context-menu" style="display: none;"></div>
+
+<div class="upload-overlay" id="upload-overlay" style="display: none;">
+    <div class="upload-box" onclick="event.stopPropagation()">
+        <h1>Build Workspace Deliverables</h1>
+        <p>Map structural action blocks directly into your active roadmap dashboard.</p>
+        
+        <div class="import-row">
+            <select id="paste-project" class="paste-input-field" onchange="checkNewProject(this)"></select>
+            <input type="text" id="paste-new-project" class="paste-input-field" placeholder="New Layer Name" style="display:none;">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <div style="flex: 1; text-align: left;">
+                <label style="font-size: 10px; font-weight: bold; color: #555;">Start Date</label>
+                <input type="date" id="import-start-date" class="paste-input-field" style="width:100%;">
+            </div>
+            <div style="flex: 1; text-align: left;">
+                <label style="font-size: 10px; font-weight: bold; color: #555;">End Date (Optional)</label>
+                <input type="date" id="import-end-date" class="paste-input-field" style="width:100%;">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <div style="flex: 1; text-align: left;">
+                <label style="font-size: 10px; font-weight: bold; color: #555;">Initial Status</label>
+                <select id="import-project-status" class="paste-input-field" style="width:100%;">
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress" selected>In Progress</option>
+                    <option value="Reviewing">Reviewing</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+            <div style="flex: 1; text-align: left;">
+                <label style="font-size: 10px; font-weight: bold; color: #555;">Priority Tier</label>
+                <select id="import-project-priority" class="paste-input-field" style="width:100%;">
+                    <option value="Critical">Critical</option>
+                    <option value="High">High</option>
+                    <option value="Always-On">Always-On</option>
+                    <option value="Low" selected>Low</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="import-row">
+            <div class="multi-select-dropdown" id="import-assignee-dropdown">
+                <div class="multi-select-header" onclick="toggleMultiSelect()"><span id="multi-select-text">-- Select Operators --</span></div>
+                <div class="multi-select-panel" id="multi-select-panel">
+                    <div style="padding: 6px 10px; text-align: right; background: #fafafa;"><span class="action-link" onclick="clearMultiSelect();">Clear All</span></div>
+                    <div id="multi-select-checkboxes"></div>
+                    <div class="multi-select-add"><input type="text" id="paste-new-assignee" class="paste-input-field" placeholder="+ Quick-Add Assignee" oninput="filterAssignees()" onkeypress="if(event.key === 'Enter') { addNewMultiSelectAssignee(); }"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 10px;">
+            <label style="font-size: 10px; font-weight: bold; color: #555; text-transform: uppercase;">Project / Task Description Note</label>
+            <input type="text" id="import-project-desc" class="paste-input-field" placeholder="Enter specific explanation summary goals for the directory drawer..." style="width:100%;">
+        </div>
+
+        <textarea id="paste-input" class="paste-area" placeholder="Write single task name or paste bulk lines here..."></textarea>
+        <button class="btn-upload" style="background: var(--c-green); color: white;" onclick="handlePasteImport()">📥 Commit Metrics Into Grid</button>
+        <br><br><button class="btn-skip" onclick="closeUploadModal()">Close Window</button>
+        <p id="upload-status" style="margin-top: 15px; font-weight: bold; font-size: 12px;"></p>
+    </div>
+</div>
+
+<div class="top-bar-container">
+    <div class="app-header">
+        <div>
+            <div class="app-title" id="main-title">CIROC OPERATIONAL MATRIX 2026</div>
+            <div class="app-subtitle">Internal Tracking Hub & Hot Sheet Matrix</div>
+        </div>
+        <button class="add-task-btn" onclick="openImportModal()" title="Build New Metric Element">+</button>
+    </div>
+    <div class="top-bar-controls">
+        <div class="top-bar-left">
+            <button class="hamburger-btn" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+            <div class="view-toggles" id="view-toggles">
+                <button class="view-btn active" id="v-all" onclick="setViewMode('all')">Master Horizon</button>
+                <button class="view-btn" id="v-month" onclick="setViewMode('month')">Month</button>
+                <button class="view-btn" id="v-week" onclick="setViewMode('week')">Week View</button>
+                <button class="view-btn" id="v-day" onclick="setViewMode('day')">Day Focus</button>
+                <button class="view-btn" style="background: #e2e8f0; color: #1e293b; font-weight: bold; border: 1px solid #cbd5e1; margin-left: 10px;" onclick="toggleWikiPanel()">ℹ️ Project Directory</button>
+            </div>
+            <div class="nav-controls" id="nav-controls" style="display: flex;">
+                <button class="nav-arrow" onclick="navigateTime(-1)">◀</button>
+                <span id="nav-label" class="nav-label">Loading Engine...</span>
+                <button class="nav-arrow" onclick="navigateTime(1)">▶</button>
+            </div>
+        </div>
+    </div>
+    <div class="tabs-container">
+        <div class="tabs" id="project-tabs"></div>
+        <button class="add-btn" onclick="addProject()" style="font-size: 20px; margin-left: auto;" title="Add Operational Layer">+</button>
+    </div>
+</div>
+
+<div class="app-body">
+    <div class="wiki-panel" id="wiki-panel">
+        <div class="wiki-header">
+            <span>ℹ️ Project Objective Directory</span>
+            <button class="wiki-close" onclick="toggleWikiPanel()">×</button>
+        </div>
+        <div class="wiki-content-area" id="wiki-content-area"></div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-scrollable">
+            <h3>Active Operators <button class="add-btn" onclick="addPerson()">+</button></h3>
+            <div class="filter-actions"><span class="action-link" onclick="selectAllAssignees()">Select All</span><span class="action-link" onclick="clearAllAssignees()">Clear All</span></div>
+            <div class="assignee-list" id="assignee-list"></div>
+            
+            <div class="global-notes-container">
+                <h3>Reminders</h3>
+                <div class="scratch-input-row">
+                    <input type="text" id="scratch-input" class="paste-input-field" placeholder="Jot down ad-hoc task..." onkeypress="if(event.key === 'Enter') addScratchItem()">
+                    <button class="scratch-add-btn" onclick="addScratchItem()">+</button>
+                </div>
+                <div class="scratch-list-scroller" id="scratch-list-scroller"></div>
+            </div>
+        </div>
+        <div class="settings-panel">
+            <h4 onclick="toggleSettings()">Settings & System Exports</h4>
+            <div id="settings-content">
+                <label class="segmented-control"><input type="checkbox" id="theme-toggle" onchange="toggleTheme()" class="seg-cb"><div class="seg-slider"></div><div class="seg-option opt-left">Light</div><div class="seg-option opt-right">Dark</div></label>
+                <label class="segmented-control"><input type="checkbox" id="color-toggle" onchange="toggleColorMode()" class="seg-cb"><div class="seg-slider"></div><div class="seg-option opt-left">Operator Color</div><div class="seg-option opt-right">Layer Color</div></label>
+                <div class="export-row">
+                    <button class="export-btn" onclick="exportDOC()">📄 Export Word List</button>
+                    <button class="export-btn" onclick="window.print()">🖨️ Print Blueprint</button>
+                </div>
+                <button onclick="resetData()" class="reset-btn" style="margin-top: 5px;">Reset System Cache</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="calendar-container" id="calendar-container">
+            <div class="grid-header" id="grid-header"></div>
+            <div id="calendar-body"></div>
+        </div> 
+        <div class="list-container" id="list-container"></div>
+    </div> 
+
+    <div class="modal-overlay" id="event-modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">×</button>
+            <div class="edit-mode" id="edit-mode" style="display: block;">
+                <h2 id="edit-header">Modify Action Matrix Element</h2>
+                <div class="form-group">
+                    <label>Task Nomenclature Header</label>
+                    <input type="text" id="edit-title">
+                </div>
+                <div class="form-group">
+                    <label>Operational Tracking Layer</label>
+                    <select id="edit-project"></select>
+                </div>
+                <div class="form-group"><label>Classification Functional Profile</label>
+                    <select id="edit-type"><option value="work">Standard Core Deliverable</option><option value="shoot">Production Milestone</option><option value="ooo">OOO Window / Intermission</option></select>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;"><label>Target Horizon Start</label><input type="date" id="edit-start"></div>
+                    <div class="form-group" style="flex: 1;"><label>Target Horizon End</label><input type="date" id="edit-end"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Task Recurrence Blueprint Pattern</label>
+                    <select id="edit-recurrence">
+                        <option value="none">One-Time Event (No Loop Replication)</option>
+                        <option value="daily">Repeat Daily (Runs through end of 2026)</option>
+                        <option value="monthly">Repeat Monthly (Runs through end of 2026)</option>
+                        <option value="quarterly">Repeat Quarterly (Runs through end of 2026)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="weekend-toggle-wrap" style="display:none; padding: 4px 0;">
+                    <label style="display:flex; align-items:center; font-weight:normal; font-size:11px; text-transform:none; color:#aaa;">
+                        <input type="checkbox" id="skip-weekends-checkbox" checked style="margin-right:6px;"> Automatically skip weekends (Saturday & Sunday)
+                    </label>
+                </div>
+
+                <div class="form-group"><label>Assigned Operators</label><div class="assignee-checkboxes" id="edit-assignees"></div></div>
+                <div class="shift-container" id="shift-container"><label><input type="checkbox" id="shift-subsequent"> Automatically ripple and shift subsequent workflow dependencies</label></div>
+                <button class="btn-save" onclick="saveEvent()">Lock Metrics Changes</button>
+                <button class="btn-delete" id="delete-btn" onclick="deleteEvent()">Purge Deliverable From Workspace</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast-notification" class="undo-redo-toast">State Change Reversed</div>
+
+<script>
+    const defaultTeam = {
+        'JACKIE BLAZE': '#3b82f6', 'ERIC TABACH': '#10b981', 'VICTORIA TREBLE': '#f59e0b',
+        'CRYSTAL CHEN': '#ec4899', 'BRANDON GARCIA': '#8b5cf6', 'STEFANO CANAVESIO': '#6366f1',
+        'MYLES MCCABE': '#06b6d4', 'DANIELLE WATERMAN': '#f43f5e', 'EMERSON': '#14b8a6',
+        'JOEL': '#a855f7', 'CLIENT/EXT': '#EAE4DC'
+    };
+    const defaultAssigneeOrder = ['JACKIE BLAZE', 'ERIC TABACH', 'VICTORIA TREBLE', 'CRYSTAL CHEN', 'BRANDON GARCIA', 'STEFANO CANAVESIO', 'MYLES MCCABE', 'DANIELLE WATERMAN', 'EMERSON', 'JOEL', 'CLIENT/EXT'];
+    const defaultProjects = ["🔥 Today's Focus", "📱 Posting", "🎬 Production", "PTO/OOO"];
+    const defaultProjectColors = { "🔥 Today's Focus": '#ef4444', "📱 Posting": '#f59e0b', "🎬 Production": '#3b82f6', "PTO/OOO": '#71717a' };
+    
+    const defaultWikiExplainerData = {
+        "Creators to make 2x SMAs per day": "Goal parameters tracking internal asset production volume criteria loops.",
+        "Messy Martini: Creative Check-in": "Alignment window mapping client creative briefs and revision expectations.",
+        "Cannes: Strategy Brief Execution": "High-level campaign infrastructure planning for upcoming global activations.",
+        "Kim Price OOO Window": "Resource intermission pipeline management framework data entry block."
+    };
+
+    const defaultWikiLinks = {
+        "Messy Martini: Creative Check-in": "https://docs.google.com/presentation/d/",
+        "Cannes: Strategy Brief Execution": "https://docs.google.com/presentation/d/"
+    };
+
+    const defaultWikiStatuses = {
+        "Creators to make 2x SMAs per day": "In Progress",
+        "Messy Martini: Creative Check-in": "Reviewing",
+        "Cannes: Strategy Brief Execution": "Not Started"
+    };
+
+    const defaultWikiPriorities = {
+        "Creators to make 2x SMAs per day": "Low",
+        "Messy Martini: Creative Check-in": "Critical",
+        "Cannes: Strategy Brief Execution": "High"
+    };
+
+    const defaultEventsRaw = [
+        { id: 1, title: "Creators to make 2x SMAs per day", project: "🔥 Today's Focus", type: "work", start: "2026-05-28", end: "2026-05-28", assignees: ["BRANDON GARCIA", "STEFANO CANAVESIO"] },
+        { id: 2, title: "Messy Martini: Creative Check-in", project: "🔥 Today's Focus", type: "work", start: "2026-05-29", end: "2026-05-29", assignees: ["JACKIE BLAZE", "ERIC TABACH", "VICTORIA TREBLE"] },
+        { id: 3, title: "Messy Martini: Internal Review", project: "🔥 Today's Focus", type: "work", start: "2026-06-01", end: "2026-06-01", assignees: ["JACKIE BLAZE", "ERIC TABACH"] },
+        { id: 4, title: "Messy Martini: Client Review R3", project: "🔥 Today's Focus", type: "work", start: "2026-06-04", end: "2026-06-04", assignees: ["JACKIE BLAZE", "ERIC TABACH", "VICTORIA TREBLE"] },
+        { id: 5, title: "Monthly Report: Present to Client", project: "🔥 Today's Focus", type: "work", start: "2026-05-28", end: "2026-05-28", assignees: ["JACKIE BLAZE", "ERIC TABACH"] },
+        { id: 6, title: "Cannes: Strategy Brief Execution", project: "🔥 Today's Focus", type: "work", start: "2026-05-28", end: "2026-05-28", assignees: ["CRYSTAL CHEN", "BRANDON GARCIA", "ERIC TABACH", "DANIELLE WATERMAN"] },
+        { id: 7, title: "Cannes: Creative Review I", project: "🔥 Today's Focus", type: "work", start: "2026-06-01", end: "2026-06-01", assignees: ["CRYSTAL CHEN", "BRANDON GARCIA"] },
+        { id: 8, title: "Cannes: Shared Concepts with Client R1", project: "🔥 Today's Focus", type: "work", start: "2026-06-02", end: "2026-06-02", assignees: ["CRYSTAL CHEN", "DANIELLE WATERMAN"] },
+        { id: 9, title: "Pinterest & X Recommendation Deck", project: "🔥 Today's Focus", type: "work", start: "2026-05-28", end: "2026-05-28", assignees: ["JACKIE BLAZE"] },
+        { id: 10, title: "SMAs: Share Posting Schedule in Channel", project: "📱 Posting", type: "work", start: "2026-05-28", end: "2026-05-28", assignees: ["CRYSTAL CHEN", "DANIELLE WATERMAN"] },
+        { id: 11, title: "CasC / CM / DMs: Add Opportunities to Tracker", project: "📱 Posting", type: "work", start: "2026-05-28", end: "2026-05-28", assignees: ["EMERSON", "JOEL"] },
+        { id: 12, title: "Martini Mentor: Episode 2 - INT R1 [OVERDUE]", project: "🎬 Production", type: "shoot", start: "2026-05-26", end: "2026-05-28", assignees: ["BRANDON GARCIA", "STEFANO CANAVESIO"] },
+        { id: 13, title: "Hi Lo Ball: Moscow Mule & Flamin' Hot Cheetos [OVERDUE]", project: "🎬 Production", type: "shoot", start: "2026-05-27", end: "2026-05-28", assignees: ["BRANDON GARCIA", "STEFANO CANAVESIO"] },
+        { id: 14, title: "Hi Lo Ball: Intro Episode Launch Day", project: "🎬 Production", type: "work", start: "2026-05-28", end: "2026-05-28", assignees: ["BRANDON GARCIA"] },
+        { id: 15, title: "Martini Cake: Watch the Process Review", project: "🎬 Production", type: "work", start: "2026-05-29", end: "2026-05-29", assignees: ["BRANDON GARCIA", "STEFANO CANAVESIO"] },
+        { id: 16, title: "Three Dates Reality Series: Date 1 Fleshed Out", project: "🎬 Production", type: "work", start: "2026-05-29", end: "2026-05-29", assignees: ["MYLES MCCABE", "STEFANO CANAVESIO"] },
+        { id: 17, title: "Apartment into Bar: Finalize Off-Premise License Details", project: "🎬 Production", type: "work", start: "2026-05-29", end: "2026-05-29", assignees: ["MYLES MCCABE", "STEFANO CANAVESIO"] },
+        { id: 18, title: "Kim Price OOO Window", project: "PTO/OOO", type: "ooo", start: "2026-05-26", end: "2026-05-29", assignees: ["CLIENT/EXT"] },
+        { id: 19, title: "Aileen Zhang OOO Window", project: "PTO/OOO", type: "ooo", start: "2026-05-28", end: "2026-05-29", assignees: ["CLIENT/EXT"] }
+    ];
+
+    let team = { ...defaultTeam };
+    let assigneeOrder = [...defaultAssigneeOrder];
+    let activeAssignees = new Set(assigneeOrder);
+    let appProjects = [ ...defaultProjects ];
+    let projectColors = { ...defaultProjectColors };
+    let wikiExplainerData = { ...defaultWikiExplainerData };
+    let wikiLinks = { ...defaultWikiLinks };
+    let wikiStatuses = { ...defaultWikiStatuses };
+    let wikiPriorities = { ...defaultWikiPriorities };
+    let allEvents = [...defaultEventsRaw];
+    let scratchItems = []; 
+    
+    // Core Parameters
+    let currentViewMode = 'all'; 
+    let currentTab = 'All Projects';
+    let systemToday = new Date("2026-05-28T00:00:00"); 
+    let viewAnchorDate = new Date("2026-05-25T00:00:00"); 
+    let currentEditingEventId = null;
+    let isDarkMode = true;
+    let colorByProject = true;
+
+    // ===========================================
+    // UNDO / REDO MAC CORE ARCHITECTURE STACK ENGINE
+    // ===========================================
+    let undoHistoryStack = [];
+    let redoHistoryStack = [];
+
+    function takeHistorySnapshot() {
+        if (undoHistoryStack.length >= 99) {
+            undoHistoryStack.shift(); 
+        }
+        const snapshot = JSON.stringify({
+            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems
+        });
+        undoHistoryStack.push(snapshot);
+        redoHistoryStack = []; 
+    }
+
+    function triggerUndoAction() {
+        if (undoHistoryStack.length === 0) { showToastAlert("Nothing to Undo"); return; }
+        
+        const currentLiveStateSnapshot = JSON.stringify({
+            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems
+        });
+        redoHistoryStack.push(currentLiveStateSnapshot);
+
+        const pastState = JSON.parse(undoHistoryStack.pop());
+        restoreStateData(pastState);
+        showToastAlert("Undo Executed ◀");
+    }
+
+    function triggerRedoAction() {
+        if (redoHistoryStack.length === 0) { showToastAlert("Nothing to Redo"); return; }
+
+        const currentLiveStateSnapshot = JSON.stringify({
+            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems
+        });
+        undoHistoryStack.push(currentLiveStateSnapshot);
+
+        const futureState = JSON.parse(redoHistoryStack.pop());
+        restoreStateData(futureState);
+        showToastAlert("Redo Executed ▶");
+    }
+
+    function restoreStateData(stateObj) {
+        appProjects = stateObj.appProjects;
+        allEvents = stateObj.allEvents;
+        projectColors = stateObj.projectColors;
+        wikiExplainerData = stateObj.wikiExplainerData;
+        wikiLinks = stateObj.wikiLinks;
+        wikiStatuses = stateObj.wikiStatuses;
+        wikiPriorities = stateObj.wikiPriorities;
+        scratchItems = stateObj.scratchItems;
+
+        saveData();
+        initUI();
+        updateView();
+        buildWikiDirectory();
+        renderScratchpad();
+    }
+
+    function showToastAlert(message) {
+        const toast = document.getElementById('toast-notification');
+        toast.innerText = message;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 1200);
+    }
+
+    window.addEventListener('keydown', function(event) {
+        const isMacCmd = event.metaKey; 
+        const key = event.key.toLowerCase();
+
+        if (isMacCmd && key === 'z') {
+            event.preventDefault();
+            if (event.shiftKey) {
+                triggerRedoAction(); 
+            } else {
+                triggerUndoAction(); 
+            }
+        } else if (isMacCmd && key === 'y') {
+            event.preventDefault();
+            triggerRedoAction(); 
+        }
+    });
+    // ===========================================
+
+    function saveData() { try { localStorage.setItem('cirocHubData_v14', JSON.stringify({team, projects: appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, assigneeOrder, isDarkMode, colorByProject, scratchItems})); } catch(e){} }
+
+    function loadSavedData() {
+        let savedData = localStorage.getItem('cirocHubData_v14');
+        if(savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+                if(parsed.team) team = parsed.team; 
+                if(parsed.projects) appProjects = parsed.projects; 
+                if(parsed.allEvents) allEvents = parsed.allEvents;
+                if(parsed.projectColors) projectColors = parsed.projectColors;
+                if(parsed.wikiExplainerData) wikiExplainerData = parsed.wikiExplainerData;
+                if(parsed.wikiLinks) wikiLinks = parsed.wikiLinks;
+                if(parsed.wikiStatuses) wikiStatuses = parsed.wikiStatuses;
+                if(parsed.wikiPriorities) wikiPriorities = parsed.wikiPriorities;
+                if(parsed.scratchItems) scratchItems = parsed.scratchItems;
+                activeAssignees = new Set(assigneeOrder);
+            } catch (e) {}
+        } else {
+            allEvents = [...defaultEventsRaw];
+            appProjects = [...defaultProjects];
+        }
+
+        initUI();
+        updateView();
+        buildWikiDirectory();
+        renderScratchpad();
+        
+        document.getElementById('edit-recurrence').onchange = function() {
+            let wrap = document.getElementById('weekend-toggle-wrap');
+            wrap.style.display = (this.value === 'daily') ? 'block' : 'none';
+        };
+    }
+
+    function addScratchItem() {
+        const input = document.getElementById('scratch-input');
+        const value = input.value.trim();
+        if(!value) return;
+
+        takeHistorySnapshot(); 
+
+        scratchItems.push({
+            id: Date.now(),
+            text: value,
+            completed: false
+        });
+
+        input.value = '';
+        saveData();
+        renderScratchpad();
+    }
+
+    function toggleScratchComplete(id) {
+        takeHistorySnapshot();
+        let match = scratchItems.find(i => i.id === id);
+        if(match) match.completed = !match.completed;
+        saveData();
+        renderScratchpad();
+    }
+
+    function deleteScratchItem(id) {
+        takeHistorySnapshot();
+        scratchItems = scratchItems.filter(i => i.id !== id);
+        saveData();
+        renderScratchpad();
+    }
+
+    function renderScratchpad() {
+        const target = document.getElementById('scratch-list-scroller');
+        target.innerHTML = '';
+
+        scratchItems.forEach(item => {
+            const row = document.createElement('div');
+            row.className = `scratch-item ${item.completed ? 'completed' : ''}`;
+
+            const left = document.createElement('div');
+            left.className = 'scratch-item-left';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = item.completed;
+            checkbox.onchange = () => toggleScratchComplete(item.id);
+
+            const span = document.createElement('span');
+            span.className = 'scratch-text';
+            span.innerText = item.text;
+
+            left.appendChild(checkbox);
+            left.appendChild(span);
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'scratch-del-btn';
+            delBtn.innerText = '×';
+            delBtn.onclick = () => deleteScratchItem(item.id);
+
+            row.appendChild(left);
+            row.appendChild(delBtn);
+            target.appendChild(row);
+        });
+    }
+
+    function getCleanDateStr(dateObj) { const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; return `${days[dateObj.getDay()]} ${dateObj.getMonth() + 1}/${dateObj.getDate()}`; }
+    function getDateStringForInput(dateObj) { return `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`; }
+    
+    function hexToRgba(hex, opacity) {
+        if(!hex) return `rgba(204,204,204,${opacity})`;
+        hex = hex.replace('#', '');
+        let r = parseInt(hex.substring(0, 2), 16), g = parseInt(hex.substring(2, 4), 16), b = parseInt(hex.substring(4, 6), 16);
+        return `rgba(${r},${g},${b},${opacity})`;
+    }
+
+    function initUI() {
+        document.getElementById('theme-toggle').checked = isDarkMode;
+        document.getElementById('color-toggle').checked = colorByProject;
+        if(isDarkMode) document.body.classList.add('dark-mode'); else document.body.classList.remove('dark-mode');
+
+        const tabsDiv = document.getElementById('project-tabs'); tabsDiv.innerHTML = '';
+        ['All Projects', ...appProjects].forEach(proj => {
+            const btn = document.createElement('button'); 
+            btn.className = `tab ${proj === currentTab ? 'active' : ''}`; 
+            btn.innerText = proj;
+            btn.onclick = () => { currentTab = proj; initUI(); updateView(); };
+            
+            if(proj !== 'All Projects') {
+                btn.ondblclick = () => renameOperationalLayer(proj);
+            }
+            tabsDiv.appendChild(btn);
+        });
+
+        renderAssigneeList();
+        updateEditFormDropdowns();
+    }
+
+    function renameOperationalLayer(oldName) {
+        const newName = prompt(`Modify Operational Layer Name configuration for "${oldName}":`, oldName);
+        if (!newName || newName.trim() === "" || newName.trim() === oldName) return;
+        const cleanName = newName.trim();
+
+        if (appProjects.includes(cleanName)) {
+            alert("Layer parameter variation already registered.");
+            return;
+        }
+
+        takeHistorySnapshot();
+
+        let layerIndex = appProjects.indexOf(oldName);
+        if (layerIndex !== -1) {
+            appProjects[layerIndex] = cleanName;
+            projectColors[cleanName] = projectColors[oldName] || '#6366f1';
+            delete projectColors[oldName];
+        }
+
+        allEvents.forEach(ev => {
+            if (ev.project === oldName) ev.project = cleanName;
+        });
+
+        if (currentTab === oldName) currentTab = cleanName;
+
+        saveData();
+        initUI();
+        updateView();
+        buildWikiDirectory();
+    }
+
+    function getPriorityWeight(priorityString) {
+        if (priorityString === 'Critical') return 4;
+        if (priorityString === 'High') return 3;
+        if (priorityString === 'Always-On') return 2;
+        return 1; 
+    }
+
+    function buildWikiDirectory() {
+        const target = document.getElementById('wiki-content-area');
+        target.innerHTML = '';
+        let uniqueTitles = [...new Set(allEvents.map(e => e.title))];
+
+        uniqueTitles.sort((a, b) => {
+            let pA = wikiPriorities[a] || 'Low';
+            let pB = wikiPriorities[b] || 'Low';
+            return getPriorityWeight(pB) - getPriorityWeight(pA);
+        });
+
+        uniqueTitles.forEach(title => {
+            let matchingEvent = allEvents.find(e => e.title === title);
+            let fallbackColor = (matchingEvent) ? projectColors[matchingEvent.project] : '#999';
+
+            const card = document.createElement('div');
+            card.className = 'wiki-project-card';
+            card.style.borderLeftColor = fallbackColor;
+            
+            const titleRow = document.createElement('div');
+            titleRow.className = 'wiki-project-title-row';
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'wiki-project-title';
+            titleDiv.innerText = title;
+
+            const linkEmoji = document.createElement('button');
+            linkEmoji.className = 'wiki-deck-link-emoji';
+            linkEmoji.innerText = '🔗 Edit Link';
+            
+            linkEmoji.onclick = () => {
+                let currentUrl = wikiLinks[title] || '';
+                let promptInput = prompt(`Assign Asset Deck Link URL parameters for "${title}":`, currentUrl);
+                if (promptInput !== null) {
+                    takeHistorySnapshot();
+                    wikiLinks[title] = promptInput;
+                    saveData();
+                    buildWikiDirectory();
+                }
+            };
+
+            titleRow.appendChild(titleDiv);
+            titleRow.appendChild(linkEmoji);
+
+            let targetUrl = wikiLinks[title];
+            if(targetUrl && targetUrl.trim() !== "") {
+                const launchBtn = document.createElement('a');
+                launchBtn.className = 'wiki-launch-btn';
+                launchBtn.innerText = 'Launch Deck ↗';
+                launchBtn.href = targetUrl.startsWith('http') ? targetUrl : 'https://' + targetUrl;
+                launchBtn.target = '_blank';
+                titleRow.appendChild(launchBtn);
+            }
+
+            const selectorsGrid = document.createElement('div');
+            selectorsGrid.className = 'wiki-meta-selectors-grid';
+
+            const statusSelect = document.createElement('select');
+            statusSelect.className = 'wiki-dropdown-field';
+            statusSelect.innerHTML = `
+                <option value="Not Started">幕 Not Started</option>
+                <option value="In Progress">⚡ In Progress</option>
+                <option value="Reviewing">👁️ Reviewing</option>
+                <option value="Completed">✅ Completed</option>
+            `;
+            statusSelect.value = wikiStatuses[title] || 'Not Started';
+            statusSelect.onchange = () => {
+                takeHistorySnapshot();
+                wikiStatuses[title] = statusSelect.value;
+                saveData();
+            };
+
+            const prioritySelect = document.createElement('select');
+            prioritySelect.className = 'wiki-dropdown-field';
+            prioritySelect.innerHTML = `
+                <option value="Critical">🔥 Critical</option>
+                <option value="High">⚡ High</option>
+                <option value="Always-On">🔄 Always-On</option>
+                <option value="Low">📋 Low</option>
+            `;
+            prioritySelect.value = wikiPriorities[title] || 'Low';
+            prioritySelect.onchange = () => {
+                takeHistorySnapshot();
+                wikiPriorities[title] = prioritySelect.value;
+                saveData();
+                buildWikiDirectory(); 
+            };
+
+            selectorsGrid.appendChild(statusSelect);
+            selectorsGrid.appendChild(prioritySelect);
+
+            const input = document.createElement('textarea');
+            input.className = 'wiki-project-desc-input';
+            input.placeholder = "Click here to add notes/explanations for this deliverable goal parameter...";
+            input.value = wikiExplainerData[title] || '';
+            
+            input.oninput = () => {
+                wikiExplainerData[title] = input.value;
+                saveData();
+            };
+
+            card.appendChild(titleRow);
+            card.appendChild(selectorsGrid);
+            card.appendChild(input);
+            target.appendChild(card);
+        });
+    }
+
+    function toggleWikiPanel() {
+        const panel = document.getElementById('wiki-panel');
+        panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+        if (panel.style.display === 'flex') buildWikiDirectory();
+    }
+
+    function renderAssigneeList() {
+        const listDiv = document.getElementById('assignee-list'); listDiv.innerHTML = '';
+        assigneeOrder.forEach(person => {
+            const item = document.createElement('label'); item.className = 'filter-item';
+            const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.checked = activeAssignees.has(person);
+            checkbox.onchange = () => { if(checkbox.checked) activeAssignees.add(person); else activeAssignees.delete(person); updateView(); };
+            const swatch = document.createElement('div'); swatch.className = 'swatch'; swatch.style.background = team[person];
+            item.appendChild(checkbox); item.appendChild(swatch); item.appendChild(document.createTextNode(person));
+            listDiv.appendChild(item);
+        });
+    }
+
+    function updateEditFormDropdowns() {
+        const projSelect = document.getElementById('edit-project'); projSelect.innerHTML = '';
+        appProjects.forEach(p => projSelect.innerHTML += `<option value="${p}">${p}</option>`);
+        const assignDiv = document.getElementById('edit-assignees'); assignDiv.innerHTML = '';
+        assigneeOrder.forEach(t => { assignDiv.innerHTML += `<label><input type="checkbox" value="${t}"> ${t}</label>`; });
+    }
+
+    function setViewMode(mode) { 
+        currentViewMode = mode; 
+        if (mode === 'day') viewAnchorDate = new Date(systemToday); 
+        else if (mode === 'week' || mode === 'all') viewAnchorDate = new Date("2026-05-25T00:00:00"); 
+        else if (mode === 'month') viewAnchorDate = new Date("2026-05-01T00:00:00"); 
+
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        if (document.getElementById(`v-${mode}`)) {
+            document.getElementById(`v-${mode}`).classList.add('active');
+        }
+        updateView(); 
+    }
+
+    function getBackground(assignees, type, transparency = 1, project = null) {
+        if (colorByProject && project) return hexToRgba(projectColors[project] || '#999999', transparency);
+        if (assignees && assignees.length > 0) return hexToRgba(team[assignees[0]] || '#e2e8f0', transparency);
+        return `rgba(150, 150, 150, ${transparency})`;
+    }
+
+    var updateView = function() {
+        document.getElementById('calendar-container').style.display = 'block';
+        document.getElementById('list-container').style.display = 'none';
+        renderCalendar();
+    }
+
+    function navigateTime(direction) {
+        let step = 7;
+        if (currentViewMode === 'month') step = 30;
+        if (currentViewMode === 'day') step = 1;
+        viewAnchorDate.setDate(viewAnchorDate.getDate() + (direction * step));
+        updateView();
+    }
+
+    function renderCalendar() {
+        let totalDays = 7; 
+        if (currentViewMode === 'all') totalDays = 14; 
+        if (currentViewMode === 'month') totalDays = 30; 
+        if (currentViewMode === 'day') totalDays = 1;
+
+        const header = document.getElementById('grid-header');
+        header.style.gridTemplateColumns = `120px repeat(${totalDays}, 1fr)`;
+        
+        let headerHtml = '<div class="grid-cell">Operators</div>';
+        let dayLabels = [];
+        
+        for (let i = 0; i < totalDays; i++) {
+            let loopDate = new Date(viewAnchorDate);
+            loopDate.setDate(loopDate.getDate() + i);
+            dayLabels.push(loopDate);
+            headerHtml += `<div class="grid-cell">${getCleanDateStr(loopDate)}</div>`;
+        }
+        header.innerHTML = headerHtml;
+
+        const navLabel = document.getElementById('nav-label');
+        if(navLabel) navLabel.innerText = `${getCleanDateStr(dayLabels[0])} - ${getCleanDateStr(dayLabels[dayLabels.length-1])}`;
+
+        const body = document.getElementById('calendar-body'); body.innerHTML = '';
+
+        assigneeOrder.forEach(assignee => {
+            if(!activeAssignees.has(assignee)) return;
+            const row = document.createElement('div'); row.className = 'week-row';
+            let bgHtml = `<div class="week-bg" style="grid-template-columns: 120px repeat(${totalDays}, 1fr)">`;
+            bgHtml += `<div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">${assignee}</div>`;
+            
+            for(let i=0; i<totalDays; i++) {
+                let dateStr = getDateStringForInput(dayLabels[i]);
+                let dayBg = (dateStr === "2026-05-28") ? "#1e293b" : "#1e1e1e";
+                bgHtml += `<div class="day-col" style="background: ${dayBg};"></div>`;
+            }
+            bgHtml += `</div>`;
+
+            let content = document.createElement('div'); content.className = 'week-content';
+            content.style.marginLeft = "120px";
+            content.style.gridTemplateColumns = `repeat(${totalDays}, 1fr)`;
+
+            let personEvents = allEvents.filter(ev => ev.assignees.includes(assignee) && (currentTab === 'All Projects' || ev.project === currentTab));
+            
+            personEvents.forEach(ev => {
+                let evStart = new Date(ev.start + 'T00:00:00');
+                let evEnd = new Date(ev.end + 'T00:00:00');
+                
+                let diffStart = Math.round((evStart - dayLabels[0])/(1000*60*60*24)) + 1;
+                let diffEnd = Math.round((evEnd - dayLabels[0])/(1000*60*60*24)) + 1;
+                
+                let gridStart = Math.max(1, diffStart);
+                let gridEnd = Math.min(totalDays, diffEnd);
+                
+                if(gridStart <= totalDays && gridEnd >= 1) {
+                    let spanCount = (gridEnd - gridStart) + 1;
+                    const el = document.createElement('div'); el.className = `event ${ev.type}`;
+                    el.innerText = (currentTab === 'All Projects') ? `${ev.project.slice(0,4)}: ${ev.title}` : ev.title;
+                    el.style.gridColumn = `${gridStart} / span ${spanCount}`;
+                    el.style.background = getBackground(ev.assignees, ev.type, 1, ev.project);
+                    el.style.color = "#fff";
+                    el.onclick = () => openModal(ev.id);
+                    content.appendChild(el);
+                }
+            });
+
+            row.innerHTML = bgHtml; row.appendChild(content); body.appendChild(row);
+        });
+    }
+
+    function openModal(id) {
+        currentEditingEventId = id; let ev = allEvents.find(e => e.id === id); if (!ev) return;
+        document.getElementById('edit-title').value = ev.title;
+        document.getElementById('edit-project').value = ev.project;
+        document.getElementById('edit-type').value = ev.type;
+        document.getElementById('edit-start').value = ev.start;
+        document.getElementById('edit-end').value = ev.end;
+        
+        document.getElementById('edit-recurrence').value = "none"; 
+        document.getElementById('weekend-toggle-wrap').style.display = 'none';
+        document.getElementById('skip-weekends-checkbox').checked = true;
+
+        document.querySelectorAll('#edit-assignees input').forEach(cb => { cb.checked = ev.assignees.includes(cb.value); });
+        document.getElementById('event-modal').style.display = 'flex';
+    }
+
+    function saveEvent() {
+        takeHistorySnapshot();
+        let ev = allEvents.find(e => e.id === currentEditingEventId);
+        if(ev) {
+            ev.title = document.getElementById('edit-title').value;
+            ev.project = document.getElementById('edit-project').value;
+            ev.type = document.getElementById('edit-type').value;
+            ev.start = document.getElementById('edit-start').value;
+            ev.end = document.getElementById('edit-end').value;
+            let checked = []; document.querySelectorAll('#edit-assignees input:checked').forEach(cb => checked.push(cb.value));
+            ev.assignees = checked;
+
+            let pattern = document.getElementById('edit-recurrence').value;
+            let skipWeekends = document.getElementById('skip-weekends-checkbox').checked;
+            let yearEnd = new Date("2026-12-31T00:00:00");
+
+            if (pattern !== 'none') {
+                let currentLoopDate = new Date(ev.start + 'T00:00:00');
+                
+                if (pattern === 'daily') currentLoopDate.setDate(currentLoopDate.getDate() + 1);
+                if (pattern === 'monthly') currentLoopDate.setMonth(currentLoopDate.getMonth() + 1);
+                if (pattern === 'quarterly') currentLoopDate.setMonth(currentLoopDate.getMonth() + 3);
+
+                while (currentLoopDate <= yearEnd) {
+                    let loopDayOfWeek = currentLoopDate.getDay();
+                    
+                    if (pattern === 'daily' && skipWeekends && (loopDayOfWeek === 0 || loopDayOfWeek === 6)) {
+                        currentLoopDate.setDate(currentLoopDate.getDate() + 1);
+                        continue;
+                    }
+
+                    let dateStringGenerated = getDateStringForInput(currentLoopDate);
+                    allEvents.push({
+                        id: Date.now() + Math.floor(Math.random() * 900000),
+                        title: ev.title, project: ev.project, type: ev.type,
+                        start: dateStringGenerated, end: dateStringGenerated,
+                        assignees: ev.assignees
+                    });
+
+                    if (pattern === 'daily') currentLoopDate.setDate(currentLoopDate.getDate() + 1);
+                    if (pattern === 'monthly') currentLoopDate.setMonth(currentLoopDate.getMonth() + 1);
+                    if (pattern === 'quarterly') currentLoopDate.setMonth(currentLoopDate.getMonth() + 3);
+                }
+            }
+
+            saveData(); closeModal(); updateView(); buildWikiDirectory();
+        }
+    }
+
+    function deleteEvent() {
+        allEvents = allEvents.filter(e => e.id !== currentEditingEventId);
+        saveData(); closeModal(); updateView(); buildWikiDirectory();
+    }
+    function closeModal() { document.getElementById('event-modal').style.display = 'none'; }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
+
+    function openImportModal() {
+        const overlay = document.getElementById('upload-overlay');
+        const projSelect = document.getElementById('paste-project');
+        
+        document.getElementById('import-start-date').value = getDateStringForInput(systemToday);
+        document.getElementById('import-end-date').value = getDateStringForInput(systemToday);
+        document.getElementById('import-project-desc').value = '';
+
+        if (projSelect) {
+            projSelect.innerHTML = '<option value="">-- Select Tracking Layer --</option>';
+            appProjects.forEach(p => {
+                projSelect.innerHTML += `<option value="${p}">${p}</option>`;
+            });
+            projSelect.innerHTML += '<option value="__NEW__">+ Add Custom Layer...</option>';
+        }
+        
+        const checkDiv = document.getElementById('multi-select-checkboxes');
+        if (checkDiv) {
+            checkDiv.innerHTML = '';
+            assigneeOrder.forEach(person => {
+                checkDiv.innerHTML += `
+                    <div class="multi-select-item">
+                        <input type="checkbox" value="${person}" id="imp-${person}">
+                        <label for="imp-${person}">${person}</label>
+                    </div>`;
+            });
+        }
+        if(overlay) overlay.style.display = 'flex';
+    }
+
+    function closeUploadModal() {
+        const overlay = document.getElementById('upload-overlay');
+        if(overlay) overlay.style.display = 'none';
+    }
+
+    function checkNewProject(selectEl) {
+        const inputEl = document.getElementById('paste-new-project');
+        if(inputEl) inputEl.style.display = (selectEl.value === '__NEW__') ? 'block' : 'none';
+    }
+
+    function handlePasteImport() {
+        const text = document.getElementById('paste-input').value;
+        let targetProject = document.getElementById('paste-project').value;
+        const explainerNote = document.getElementById('import-project-desc').value.trim();
+        
+        const initialStatusValue = document.getElementById('import-project-status').value;
+        const initialPriorityValue = document.getElementById('import-project-priority').value;
+
+        if (targetProject === '__NEW__') {
+            const newProjInput = document.getElementById('paste-new-project').value.trim();
+            if(!newProjInput) { alert("Please provide a name."); return; }
+            if(!appProjects.includes(newProjInput)) {
+                appProjects.push(newProjInput);
+                projectColors[newProjInput] = '#6366f1';
+            }
+            targetProject = newProjInput;
+        }
+        
+        if (!targetProject) { alert("Please map category layer."); return; }
+
+        let pickedOperators = [];
+        document.querySelectorAll('#multi-select-checkboxes input:checked').forEach(cb => pickedOperators.push(cb.value));
+        if (pickedOperators.length === 0) { alert("Pick at least one operator."); return; }
+
+        let baseStartStr = document.getElementById('import-start-date').value;
+        let baseEndStr = document.getElementById('import-end-date').value || baseStartStr;
+
+        const lines = text.split('\n');
+        let importedCount = 0;
+
+        if (text.trim() === "") { alert("Task input blank."); return; }
+
+        lines.forEach(line => {
+            if(!line.trim()) return;
+            
+            let currentLineStart = baseStartStr;
+            let currentLineEnd = baseEndStr;
+            let parsedTitle = line.trim();
+
+            const dateMatch = line.match(/(?:\b\d{1,2}\/\d{1,2}\b)/);
+            if (dateMatch) {
+                const [m, d] = dateMatch[0].split('/');
+                currentLineStart = `2026-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                currentLineEnd = currentLineStart;
+                parsedTitle = line.replace(/.*?\d{1,2}\/\d{1,2}[:\-]?\s*/, '').trim();
+            }
+
+            if(explainerNote) wikiExplainerData[parsedTitle] = explainerNote;
+            
+            wikiStatuses[parsedTitle] = initialStatusValue;
+            wikiPriorities[parsedTitle] = initialPriorityValue;
+
+            allEvents.push({
+                id: Date.now() + Math.floor(Math.random() * 10000),
+                title: parsedTitle, project: targetProject,
+                type: (targetProject === "PTO/OOO" || targetProject.includes("OOO")) ? "ooo" : "work",
+                start: currentLineStart, end: currentLineEnd, assignees: pickedOperators
+            });
+            importedCount++;
+        });
+
+        document.getElementById('paste-input').value = '';
+        document.getElementById('upload-status').innerText = `Loaded ${importedCount} task elements!`;
+        
+        saveData(); initUI(); updateView(); buildWikiDirectory();
+        setTimeout(() => { closeUploadModal(); document.getElementById('upload-status').innerText = ''; }, 1000);
+    }
+
+    function toggleMultiSelect() { document.getElementById('multi-select-panel').classList.toggle('open'); }
+    function clearMultiSelect() { document.querySelectorAll('#multi-select-checkboxes input').forEach(c => c.checked = false); }
+    function filterAssignees() {} 
+    function addNewMultiSelectAssignee() {}
+    function toggleSettings() {
+        const content = document.getElementById('settings-content');
+        content.style.display = (content.style.display === 'none') ? 'flex' : 'none';
+    }
+    function toggleTheme() {
+        isDarkMode = document.getElementById('theme-toggle').checked;
+        if(isDarkMode) document.body.classList.add('dark-mode'); else document.body.classList.remove('dark-mode');
+        saveData();
+    }
+    function toggleColorMode() {
+        colorByProject = document.getElementById('color-toggle').checked;
+        saveData(); updateView();
+    }
+    function resetData() {
+        if(confirm("Wipe cache memory?")) {
+            localStorage.removeItem('cirocHubData_v14');
+            location.reload();
+        }
+    }
+    function exportDOC() {
+        let text = "";
+        allEvents.forEach(e => text += `[${e.start}] ${e.title} (${e.project})\n`);
+        const blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "Operational_Blueprint.txt"; a.click();
+    }
+
+    window.onload = () => { loadSavedData(); };
+</script>
+</body></html>
