@@ -1187,6 +1187,42 @@
         a.click();
     }
 
+    // NEW EXPLICIT ADDERS IMPLEMENTED:
+    function addPerson() {
+        takeHistorySnapshot();
+        const name = prompt("Enter new Operator Name:");
+        if (!name || name.trim() === "") return;
+        const upperName = name.trim().toUpperCase();
+        if (assigneeOrder.includes(upperName)) {
+            alert("Operator variant already registered.");
+            return;
+        }
+        // Generate a random bright hex color code
+        const randomColor = "#" + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+        team[upperName] = randomColor;
+        assigneeOrder.push(upperName);
+        activeAssignees.add(upperName);
+        saveData();
+        initUI();
+        updateView();
+    }
+
+    function addProject() {
+        takeHistorySnapshot();
+        const name = prompt("Enter new Operational Layer Name:");
+        if (!name || name.trim() === "") return;
+        const cleanName = name.trim();
+        if (appProjects.includes(cleanName)) {
+            alert("Layer variant already registered.");
+            return;
+        }
+        appProjects.push(cleanName);
+        projectColors[cleanName] = "#" + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+        saveData();
+        initUI();
+        updateView();
+    }
+
     window.onload = () => { loadSavedData(); };
 </script>
 </body></html>
