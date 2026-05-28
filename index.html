@@ -80,7 +80,11 @@
     .sidebar h3 { margin-top: 0; font-size: 11px; border-bottom: 1px solid #eee; padding-bottom: 6px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center;}
     
     .assignee-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; }
-    .filter-item { display: flex; align-items: center; padding: 4px 6px; background: #fff; border: 1px solid transparent; border-radius: 4px; font-size: 11px; font-weight: bold; color: #444; cursor: pointer; transition: all 0.15s; }
+    
+    /* MODIFIED DRAGGABLE FILTER ITEM STYLES */
+    .filter-item { display: flex; align-items: center; padding: 4px 6px; background: #fff; border: 1px solid transparent; border-radius: 4px; font-size: 11px; font-weight: bold; color: #444; cursor: grab; transition: all 0.15s; user-select: none; }
+    .filter-item:active { cursor: grabbing; }
+    .filter-item.dragging { opacity: 0.4; border: 1px dashed var(--c-saddle); background: #f1f5f9; }
     .filter-item:hover { background: var(--c-saddle); color: var(--c-white); }
     .filter-item input[type="checkbox"] { margin-right: 6px; cursor: pointer; accent-color: #555; }
     .filter-item .swatch { width: 12px; height: 12px; border-radius: 2px; margin-right: 8px; border: 1px solid rgba(0,0,0,0.2); flex-shrink: 0; }
@@ -482,6 +486,9 @@
     let isDarkMode = true;
     let colorByProject = true;
 
+    // Drag tracking variable
+    let draggedPersonName = null;
+
     // ===========================================
     // UNDO / REDO MAC CORE ARCHITECTURE STACK ENGINE
     // ===========================================
@@ -493,7 +500,7 @@
             undoHistoryStack.shift(); 
         }
         const snapshot = JSON.stringify({
-            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems
+            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems, assigneeOrder
         });
         undoHistoryStack.push(snapshot);
         redoHistoryStack = []; 
@@ -503,7 +510,7 @@
         if (undoHistoryStack.length === 0) { showToastAlert("Nothing to Undo"); return; }
         
         const currentLiveStateSnapshot = JSON.stringify({
-            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems
+            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems, assigneeOrder
         });
         redoHistoryStack.push(currentLiveStateSnapshot);
 
@@ -516,7 +523,7 @@
         if (redoHistoryStack.length === 0) { showToastAlert("Nothing to Redo"); return; }
 
         const currentLiveStateSnapshot = JSON.stringify({
-            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems
+            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems, assigneeOrder
         });
         undoHistoryStack.push(currentLiveStateSnapshot);
 
@@ -534,6 +541,7 @@
         wikiStatuses = stateObj.wikiStatuses;
         wikiPriorities = stateObj.wikiPriorities;
         scratchItems = stateObj.scratchItems;
+        if(stateObj.assigneeOrder) assigneeOrder = stateObj.assigneeOrder;
 
         saveData();
         initUI();
@@ -583,6 +591,7 @@
                 if(parsed.wikiStatuses) wikiStatuses = parsed.wikiStatuses;
                 if(parsed.wikiPriorities) wikiPriorities = parsed.wikiPriorities;
                 if(parsed.scratchItems) scratchItems = parsed.scratchItems;
+                if(parsed.assigneeOrder) assigneeOrder = parsed.assigneeOrder;
                 activeAssignees = new Set(assigneeOrder);
             } catch (e) {}
         } else {
@@ -852,16 +861,84 @@
         if (panel.style.display === 'flex') buildWikiDirectory();
     }
 
+    // UPDATED ASSIGNEE RENDER SYSTEM TO SUPPORT NATIVE DRAG EVENTS
     function renderAssigneeList() {
         const listDiv = document.getElementById('assignee-list'); listDiv.innerHTML = '';
-        assigneeOrder.forEach(person => {
-            const item = document.createElement('label'); item.className = 'filter-item';
-            const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.checked = activeAssignees.has(person);
-            checkbox.onchange = () => { if(checkbox.checked) activeAssignees.add(person); else activeAssignees.delete(person); updateView(); };
-            const swatch = document.createElement('div'); swatch.className = 'swatch'; swatch.style.background = team[person];
-            item.appendChild(checkbox); item.appendChild(swatch); item.appendChild(document.createTextNode(person));
+        assigneeOrder.forEach((person, index) => {
+            const item = document.createElement('div'); 
+            item.className = 'filter-item';
+            item.setAttribute('draggable', 'true');
+            item.setAttribute('data-name', person);
+
+            // Drag Event Hooks
+            item.addEventListener('dragstart', handleDragStart);
+            item.addEventListener('dragover', handleDragOver);
+            item.addEventListener('drop', handleDrop);
+            item.addEventListener('dragend', handleDragEnd);
+
+            const labelWrap = document.createElement('label');
+            labelWrap.style.display = 'flex';
+            labelWrap.style.alignItems = 'center';
+            labelWrap.style.width = '100%';
+            labelWrap.style.cursor = 'inherit';
+
+            const checkbox = document.createElement('input'); 
+            checkbox.type = 'checkbox'; 
+            checkbox.checked = activeAssignees.has(person);
+            checkbox.onchange = () => { 
+                if(checkbox.checked) activeAssignees.add(person); 
+                else activeAssignees.delete(person); 
+                updateView(); 
+            };
+
+            const swatch = document.createElement('div'); 
+            swatch.className = 'swatch'; 
+            swatch.style.background = team[person];
+            
+            labelWrap.appendChild(checkbox); 
+            labelWrap.appendChild(swatch); 
+            labelWrap.appendChild(document.createTextNode(person));
+            item.appendChild(labelWrap);
             listDiv.appendChild(item);
         });
+    }
+
+    // DRAG-AND-DROP WORKFLOW HANDLER UTILITIES
+    function handleDragStart(e) {
+        draggedPersonName = this.getAttribute('data-name');
+        this.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+        if (e.preventDefault) { e.preventDefault(); }
+        return false;
+    }
+
+    function handleDrop(e) {
+        e.stopPropagation();
+        const targetPersonName = this.getAttribute('data-name');
+        
+        if (draggedPersonName && draggedPersonName !== targetPersonName) {
+            takeHistorySnapshot();
+            
+            const fromIndex = assigneeOrder.indexOf(draggedPersonName);
+            const toIndex = assigneeOrder.indexOf(targetPersonName);
+            
+            // Reposition name token inside array layout
+            assigneeOrder.splice(fromIndex, 1);
+            assigneeOrder.splice(toIndex, 0, draggedPersonName);
+            
+            saveData();
+            initUI();
+            updateView();
+        }
+        return false;
+    }
+
+    function handleDragEnd() {
+        this.classList.remove('dragging');
+        draggedPersonName = null;
     }
 
     function updateEditFormDropdowns() {
@@ -1187,7 +1264,6 @@
         a.click();
     }
 
-    // NEW EXPLICIT ADDERS IMPLEMENTED:
     function addPerson() {
         takeHistorySnapshot();
         const name = prompt("Enter new Operator Name:");
@@ -1197,7 +1273,6 @@
             alert("Operator variant already registered.");
             return;
         }
-        // Generate a random bright hex color code
         const randomColor = "#" + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
         team[upperName] = randomColor;
         assigneeOrder.push(upperName);
