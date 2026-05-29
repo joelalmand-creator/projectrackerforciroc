@@ -71,7 +71,7 @@
     .nav-controls { display: flex; align-items: center; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 1px; }
     .nav-arrow { background: none; border: none; font-size: 10px; cursor: pointer; color: #555; padding: 3px 6px; border-radius: 2px; transition: 0.2s;}
     .nav-arrow:hover { background: var(--c-parchment); color: var(--c-black); }
-    .nav-label { font-size: 10px; font-weight: bold; color: #333; margin: 0 6px; min-width: 140px; text-align: center; }
+    .nav-label { font-size: 10px; font-weight: bold; color: #333; margin: 0; min-width: 140px; text-align: center; }
 
     .view-toggles { display: flex; background: #eee; border-radius: 4px; padding: 2px; }
     .view-btn { background: transparent; border: none; padding: 5px 10px; font-size: 11px; font-weight: bold; color: #555; border-radius: 3px; cursor: pointer; transition: 0.2s;}
@@ -315,7 +315,7 @@
         </div>
     </div>
     <div class="tabs-container">
-        <div class="tabs" id="project-tabs"><button class="tab active">All Projects</button><button class="tab draggable-layer" draggable="true" data-layer="🔥 Today's Focus">🔥 Today's Focus</button><button class="tab draggable-layer" draggable="true" data-layer="👉 Weekly Focus">👉 Weekly Focus</button><button class="tab draggable-layer" draggable="true" data-layer="✅ Monthly Focus">✅ Monthly Focus</button><button class="tab draggable-layer" draggable="true" data-layer="🎬 Production">🎬 Production</button><button class="tab draggable-layer" draggable="true" data-layer="📱 Posting">📱 Posting</button><button class="tab draggable-layer" draggable="true" data-layer="PTO">PTO</button></div>
+        <div class="tabs" id="project-tabs"></div>
         <button class="add-btn" onclick="addProject()" style="font-size: 20px; margin-left: auto;" title="Add Operational Layer">+</button>
     </div>
 </div>
@@ -326,234 +326,14 @@
             <span>ℹ️ Project Objective Directory</span>
             <button class="wiki-close" onclick="toggleWikiPanel()">×</button>
         </div>
-        <div class="wiki-content-area" id="wiki-content-area"><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Messy Martini: Creative Check-in</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button><a class="wiki-launch-btn" href="https://docs.google.com/presentation/d/1V5vwH-dv994OBr54Zvbun9UOimTexX4gbLnddWkzqK0/edit?slide=id.g397b2abd64d_0_2613#slide=id.g397b2abd64d_0_2613" target="_blank">Launch Deck ↗</a></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Messy Martini: Internal Review</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button><a class="wiki-launch-btn" href="https://docs.google.com/presentation/d/1V5vwH-dv994OBr54Zvbun9UOimTexX4gbLnddWkzqK0/edit?slide=id.g3a88ae8d63d_8_336#slide=id.g3a88ae8d63d_8_336" target="_blank">Launch Deck ↗</a></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Messy Martini: Client Review R3</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button><a class="wiki-launch-btn" href="https://docs.google.com/presentation/d/1V5vwH-dv994OBr54Zvbun9UOimTexX4gbLnddWkzqK0/edit?slide=id.g3a88ae8d63d_8_336#slide=id.g3a88ae8d63d_8_336" target="_blank">Launch Deck ↗</a></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Cannes: Strategy Brief Execution</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button><a class="wiki-launch-btn" href="https://docs.google.com/presentation/d/1NfeUjBOza9TOPqT2bWdlNWa7iob5xwb1jHpVILf1zE8/edit?slide=id.p#slide=id.p" target="_blank">Launch Deck ↗</a></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Cannes: Creative Review I</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button><a class="wiki-launch-btn" href="https://docs.google.com/presentation/d/1NfeUjBOza9TOPqT2bWdlNWa7iob5xwb1jHpVILf1zE8/edit?slide=id.p#slide=id.p" target="_blank">Launch Deck ↗</a></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Cannes: Shared Concepts with Client R1</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button><a class="wiki-launch-btn" href="https://docs.google.com/presentation/d/1NfeUjBOza9TOPqT2bWdlNWa7iob5xwb1jHpVILf1zE8/edit?slide=id.p#slide=id.p" target="_blank">Launch Deck ↗</a></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(25, 177, 68);"><div class="wiki-project-title-row"><div class="wiki-project-title">Monthly Report: Present to Client</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button><a class="wiki-launch-btn" href="https://docs.google.com/presentation/d/1LU0xZFxHT5bJTBaV7M8oRX7PMJqBcUd1N1GyAydJjg0/edit" target="_blank">Launch Deck ↗</a></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(245, 158, 11);"><div class="wiki-project-title-row"><div class="wiki-project-title">SMAs: Share Posting Schedule in Channel</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(239, 68, 68);"><div class="wiki-project-title-row"><div class="wiki-project-title">AIM: Daily</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(239, 68, 68);"><div class="wiki-project-title-row"><div class="wiki-project-title">Pinterest &amp; X Recommendation Deck</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button><a class="wiki-launch-btn" href="https://docs.google.com/presentation/d/1N4V4wlFRlZ6lfrg9Kt9xcVdvA4PJxBj56SGLMfv-Wb8/edit?slide=id.g3eb4b5fa5b9_3_13#slide=id.g3eb4b5fa5b9_3_13" target="_blank">Launch Deck ↗</a></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(245, 158, 11);"><div class="wiki-project-title-row"><div class="wiki-project-title">CasC / CM / DMs: Add Opportunities to Tracker</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button><a class="wiki-launch-btn" href="https://docs.google.com/spreadsheets/d/1LLgOdUsGLm34S_Jgrkc2HpwAWc3tZ42DM6Nc_x8S1X0/edit?gid=990831645#gid=990831645" target="_blank">Launch Deck ↗</a></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Martini Mentor: Episode 2 - INT R1 [OVERDUE]</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Hi Lo Ball: Moscow Mule &amp; Flamin' Hot Cheetos [OVERDUE]</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Hi Lo Ball: Intro Episode Launch Day</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Martini Cake: Watch the Process Review</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Three Dates Reality Series: Date 1 Fleshed Out</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Apartment into Bar: Finalize Off-Premise License Details</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(113, 113, 122);"><div class="wiki-project-title-row"><div class="wiki-project-title">Kim Price OOO</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(113, 113, 122);"><div class="wiki-project-title-row"><div class="wiki-project-title">Aileen Zhang OOO</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(113, 113, 122);"><div class="wiki-project-title-row"><div class="wiki-project-title">Eric Tabach OOO</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(239, 68, 68);"><div class="wiki-project-title-row"><div class="wiki-project-title">Daily AIM</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div><div class="wiki-project-card" style="border-left-color: rgb(59, 130, 246);"><div class="wiki-project-title-row"><div class="wiki-project-title">Grandma SMA</div><button class="wiki-deck-link-emoji">🔗 Edit Link</button></div><div class="wiki-meta-selectors-grid"><select class="wiki-dropdown-field">
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            </select><select class="wiki-dropdown-field">
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            </select></div><textarea class="wiki-project-desc-input" placeholder="Click here to add notes/explanations for this deliverable goal parameter..."></textarea></div></div>
+        <div class="wiki-content-area" id="wiki-content-area"></div>
     </div>
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-scrollable">
             <h3>Active Operators <button class="add-btn" onclick="addPerson()">+</button></h3>
             <div class="filter-actions"><span class="action-link" onclick="selectAllAssignees()">Select All</span><span class="action-link" onclick="clearAllAssignees()">Clear All</span></div>
-            <div class="assignee-list" id="assignee-list"><div class="filter-item" draggable="true" data-name="MORGAN MILLS"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(153, 209, 68);"></div>MORGAN MILLS</label></div><div class="filter-item" draggable="true" data-name="JACKIE BLAZE"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(59, 130, 246);"></div>JACKIE BLAZE</label></div><div class="filter-item" draggable="true" data-name="ERIC TABACH"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(16, 185, 129);"></div>ERIC TABACH</label></div><div class="filter-item" draggable="true" data-name="VICTORIA TREBLE"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(245, 158, 11);"></div>VICTORIA TREBLE</label></div><div class="filter-item" draggable="true" data-name="DANIELLE WATERMAN"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(244, 63, 94);"></div>DANIELLE WATERMAN</label></div><div class="filter-item" draggable="true" data-name="BRANDON GARCIA"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(139, 92, 246);"></div>BRANDON GARCIA</label></div><div class="filter-item" draggable="true" data-name="PAIGE KAISER"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(71, 255, 86);"></div>PAIGE KAISER</label></div><div class="filter-item" draggable="true" data-name="LUISA LANGE"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(114, 133, 240);"></div>LUISA LANGE</label></div><div class="filter-item" draggable="true" data-name="MYLES MCCABE"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(6, 182, 212);"></div>MYLES MCCABE</label></div><div class="filter-item" draggable="true" data-name="ANDY PEREZ"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(43, 50, 205);"></div>ANDY PEREZ</label></div><div class="filter-item" draggable="true" data-name="KIM PRICE"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(78, 126, 114);"></div>KIM PRICE</label></div><div class="filter-item" draggable="true" data-name="CAITLIN NOPPENBERGER"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(178, 229, 59);"></div>CAITLIN NOPPENBERGER</label></div><div class="filter-item" draggable="true" data-name="CRYSTAL CHEN"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(236, 72, 153);"></div>CRYSTAL CHEN</label></div><div class="filter-item" draggable="true" data-name="EMERSON"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(20, 184, 166);"></div>EMERSON</label></div><div class="filter-item" draggable="true" data-name="PRASHANT NAYER"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(165, 31, 163);"></div>PRASHANT NAYER</label></div><div class="filter-item" draggable="true" data-name="RISHI GILL"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(174, 146, 241);"></div>RISHI GILL</label></div><div class="filter-item" draggable="true" data-name="COREY DEFRANCO"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(74, 79, 56);"></div>COREY DEFRANCO</label></div><div class="filter-item" draggable="true" data-name="AILEEN ZHANG"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(196, 3, 225);"></div>AILEEN ZHANG</label></div><div class="filter-item" draggable="true" data-name="JAMIE MIN"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(11, 34, 203);"></div>JAMIE MIN</label></div><div class="filter-item" draggable="true" data-name="STEFANO CANAVESIO"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(99, 102, 241);"></div>STEFANO CANAVESIO</label></div><div class="filter-item" draggable="true" data-name="JOEL"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(168, 85, 247);"></div>JOEL</label></div><div class="filter-item" draggable="true" data-name="MARY FRENCH"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(138, 233, 166);"></div>MARY FRENCH</label></div><div class="filter-item" draggable="true" data-name="JULIETTE OCON"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(229, 179, 33);"></div>JULIETTE OCON</label></div><div class="filter-item" draggable="true" data-name="CLIENT/EXT"><label style="display: flex; align-items: center; width: 100%; cursor: inherit;"><input type="checkbox"><div class="swatch" style="background: rgb(234, 228, 220);"></div>CLIENT/EXT</label></div></div>
+            <div class="assignee-list" id="assignee-list"></div>
             
             <div class="global-notes-container">
                 <h3>Reminders</h3>
@@ -561,7 +341,7 @@
                     <input type="text" id="scratch-input" class="paste-input-field" placeholder="Jot down ad-hoc task..." onkeypress="if(event.key === 'Enter') addScratchItem()">
                     <button class="scratch-add-btn" onclick="addScratchItem()">+</button>
                 </div>
-                <div class="scratch-list-scroller" id="scratch-list-scroller"><div class="scratch-item "><div class="scratch-item-left"><input type="checkbox"><span class="scratch-text">set up a logistics call</span></div><button class="scratch-del-btn">×</button></div><div class="scratch-item "><div class="scratch-item-left"><input type="checkbox"><span class="scratch-text">fix timeline for cannes</span></div><button class="scratch-del-btn">×</button></div></div>
+                <div class="scratch-list-scroller" id="scratch-list-scroller"></div>
             </div>
         </div>
         <div class="settings-panel">
@@ -580,8 +360,8 @@
 
     <div class="main-content">
         <div class="calendar-container" id="calendar-container" style="display: block;">
-            <div class="grid-header" id="grid-header" style="grid-template-columns: 120px repeat(1, 1fr);"><div class="grid-cell">Operators</div><div class="grid-cell">Fri 5/29</div></div>
-            <div id="calendar-body"><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">MORGAN MILLS</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">JACKIE BLAZE</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Messy Martini: Creative Check-in</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">ERIC TABACH</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Messy Martini: Creative Check-in</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Grandma SMA</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">VICTORIA TREBLE</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Messy Martini: Creative Check-in</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">DANIELLE WATERMAN</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(245, 158, 11); color: rgb(255, 255, 255);">SMAs: Share Posting Schedule in Channel</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">BRANDON GARCIA</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Martini Cake: Watch the Process Review</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">PAIGE KAISER</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">LUISA LANGE</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">MYLES MCCABE</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Three Dates Reality Series: Date 1 Fleshed Out</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Apartment into Bar: Finalize Off-Premise License Details</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Grandma SMA</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">ANDY PEREZ</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">KIM PRICE</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Messy Martini: Creative Check-in</div><div class="event ooo" style="grid-column: 1 / span 1; background: rgb(113, 113, 122); color: rgb(255, 255, 255);">Kim Price OOO</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">CAITLIN NOPPENBERGER</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">CRYSTAL CHEN</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Messy Martini: Creative Check-in</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(245, 158, 11); color: rgb(255, 255, 255);">SMAs: Share Posting Schedule in Channel</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">EMERSON</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(245, 158, 11); color: rgb(255, 255, 255);">CasC / CM / DMs: Add Opportunities to Tracker</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">PRASHANT NAYER</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">RISHI GILL</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">COREY DEFRANCO</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">AILEEN ZHANG</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event ooo" style="grid-column: 1 / span 1; background: rgb(113, 113, 122); color: rgb(255, 255, 255);">Aileen Zhang OOO</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">JAMIE MIN</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">STEFANO CANAVESIO</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Messy Martini: Creative Check-in</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Martini Cake: Watch the Process Review</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Three Dates Reality Series: Date 1 Fleshed Out</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Apartment into Bar: Finalize Off-Premise License Details</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(59, 130, 246); color: rgb(255, 255, 255);">Grandma SMA</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">JOEL</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"><div class="event work" style="grid-column: 1 / span 1; background: rgb(239, 68, 68); color: rgb(255, 255, 255);">AIM: Daily</div><div class="event work" style="grid-column: 1 / span 1; background: rgb(245, 158, 11); color: rgb(255, 255, 255);">CasC / CM / DMs: Add Opportunities to Tracker</div></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">MARY FRENCH</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">JULIETTE OCON</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"></div></div><div class="week-row"><div class="week-bg" style="grid-template-columns: 120px repeat(1, 1fr)"><div class="grid-cell" style="background:#111; color:#fff; font-size:10px;">CLIENT/EXT</div><div class="day-col" style="background: #1e1e1e;"></div></div><div class="week-content" style="margin-left: 120px; grid-template-columns: repeat(1, 1fr);"></div></div></div>
+            <div class="grid-header" id="grid-header" style="grid-template-columns: 120px repeat(1, 1fr);"></div>
+            <div id="calendar-body"></div>
         </div> 
         <div class="list-container" id="list-container" style="display: none;"></div>
     </div> 
@@ -597,7 +377,7 @@
                 </div>
                 <div class="form-group">
                     <label>Operational Tracking Layer</label>
-                    <select id="edit-project"><option value="🔥 Today's Focus">🔥 Today's Focus</option><option value="👉 Weekly Focus">👉 Weekly Focus</option><option value="✅ Monthly Focus">✅ Monthly Focus</option><option value="🎬 Production">🎬 Production</option><option value="📱 Posting">📱 Posting</option><option value="PTO">PTO</option></select>
+                    <select id="edit-project"></select>
                 </div>
                 <div class="form-group"><label>Classification Functional Profile</label>
                     <select id="edit-type"><option value="work">Standard Core Deliverable</option><option value="shoot">Production Milestone</option><option value="ooo">OOO Window / Intermission</option></select>
@@ -622,7 +402,7 @@
                     </label>
                 </div>
 
-                <div class="form-group"><label>Assigned Operators</label><div class="assignee-checkboxes" id="edit-assignees"><label><input type="checkbox" value="MORGAN MILLS"> MORGAN MILLS</label><label><input type="checkbox" value="JACKIE BLAZE"> JACKIE BLAZE</label><label><input type="checkbox" value="ERIC TABACH"> ERIC TABACH</label><label><input type="checkbox" value="VICTORIA TREBLE"> VICTORIA TREBLE</label><label><input type="checkbox" value="DANIELLE WATERMAN"> DANIELLE WATERMAN</label><label><input type="checkbox" value="BRANDON GARCIA"> BRANDON GARCIA</label><label><input type="checkbox" value="PAIGE KAISER"> PAIGE KAISER</label><label><input type="checkbox" value="LUISA LANGE"> LUISA LANGE</label><label><input type="checkbox" value="MYLES MCCABE"> MYLES MCCABE</label><label><input type="checkbox" value="ANDY PEREZ"> ANDY PEREZ</label><label><input type="checkbox" value="KIM PRICE"> KIM PRICE</label><label><input type="checkbox" value="CAITLIN NOPPENBERGER"> CAITLIN NOPPENBERGER</label><label><input type="checkbox" value="CRYSTAL CHEN"> CRYSTAL CHEN</label><label><input type="checkbox" value="EMERSON"> EMERSON</label><label><input type="checkbox" value="PRASHANT NAYER"> PRASHANT NAYER</label><label><input type="checkbox" value="RISHI GILL"> RISHI GILL</label><label><input type="checkbox" value="COREY DEFRANCO"> COREY DEFRANCO</label><label><input type="checkbox" value="AILEEN ZHANG"> AILEEN ZHANG</label><label><input type="checkbox" value="JAMIE MIN"> JAMIE MIN</label><label><input type="checkbox" value="STEFANO CANAVESIO"> STEFANO CANAVESIO</label><label><input type="checkbox" value="JOEL"> JOEL</label><label><input type="checkbox" value="MARY FRENCH"> MARY FRENCH</label><label><input type="checkbox" value="JULIETTE OCON"> JULIETTE OCON</label><label><input type="checkbox" value="CLIENT/EXT"> CLIENT/EXT</label></div></div>
+                <div class="form-group"><label>Assigned Operators</label><div class="assignee-checkboxes" id="edit-assignees"></div></div>
                 <div class="shift-container" id="shift-container"><label><input type="checkbox" id="shift-subsequent"> Automatically ripple and shift subsequent workflow dependencies</label></div>
                 <button class="btn-save" onclick="saveEvent()">Lock Metrics Changes</button>
                 <button class="btn-delete" id="delete-btn" onclick="deleteEvent()">Purge Deliverable From Workspace</button>
@@ -641,8 +421,8 @@
         'JOEL': '#a855f7', 'CLIENT/EXT': '#EAE4DC'
     };
     const defaultAssigneeOrder = ['JACKIE BLAZE', 'ERIC TABACH', 'VICTORIA TREBLE', 'CRYSTAL CHEN', 'BRANDON GARCIA', 'STEFANO CANAVESIO', 'MYLES MCCABE', 'DANIELLE WATERMAN', 'EMERSON', 'JOEL', 'CLIENT/EXT'];
-    const defaultProjects = ["🔥 Today's Focus", "📱 Posting", "🎬 Production", "PTO/OOO"];
-    const defaultProjectColors = { "🔥 Today's Focus": '#ef4444', "📱 Posting": '#f59e0b', "🎬 Production": '#3b82f6', "PTO/OOO": '#71717a' };
+    const defaultProjects = ["🔥 Today's Focus", "👉 Weekly Focus", "✅ Monthly Focus", "🎬 Production", "📱 Posting", "PTO"];
+    const defaultProjectColors = { "🔥 Today's Focus": '#ef4444', "👉 Weekly Focus": '#3b82f6', "✅ Monthly Focus": '#10b981', "🎬 Production": '#6366f1', "📱 Posting": '#f59e0b', "PTO": '#71717a' };
     
     const defaultWikiExplainerData = {
         "Creators to make 2x SMAs per day": "Goal parameters tracking internal asset production volume criteria loops.",
@@ -726,7 +506,7 @@
             undoHistoryStack.shift(); 
         }
         const snapshot = JSON.stringify({
-            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems, assigneeOrder
+            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems, assigneeOrder, team
         });
         undoHistoryStack.push(snapshot);
         redoHistoryStack = []; 
@@ -736,7 +516,7 @@
         if (undoHistoryStack.length === 0) { showToastAlert("Nothing to Undo"); return; }
         
         const currentLiveStateSnapshot = JSON.stringify({
-            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems, assigneeOrder
+            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems, assigneeOrder, team
         });
         redoHistoryStack.push(currentLiveStateSnapshot);
 
@@ -749,7 +529,7 @@
         if (redoHistoryStack.length === 0) { showToastAlert("Nothing to Redo"); return; }
 
         const currentLiveStateSnapshot = JSON.stringify({
-            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems, assigneeOrder
+            appProjects, allEvents, projectColors, wikiExplainerData, wikiLinks, wikiStatuses, wikiPriorities, scratchItems, assigneeOrder, team
         });
         undoHistoryStack.push(currentLiveStateSnapshot);
 
@@ -768,6 +548,7 @@
         wikiPriorities = stateObj.wikiPriorities;
         scratchItems = stateObj.scratchItems;
         if(stateObj.assigneeOrder) assigneeOrder = stateObj.assigneeOrder;
+        if(stateObj.team) team = stateObj.team;
 
         saveData();
         initUI();
@@ -920,7 +701,7 @@
 
         const tabsDiv = document.getElementById('project-tabs'); tabsDiv.innerHTML = '';
         
-        // RENDER MASTER COMBINED tabs ARRAY SYSTEM
+        // RENDER MASTER COMBINED tabs ARRAY SYSTEM WITH FULL LAYOUT MANAGEMENT
         ['All Projects', ...appProjects].forEach(proj => {
             const btn = document.createElement('button'); 
             btn.className = `tab ${proj === currentTab ? 'active' : ''}`; 
@@ -928,7 +709,7 @@
             btn.onclick = () => { currentTab = proj; initUI(); updateView(); };
             
             if(proj !== 'All Projects') {
-                btn.ondblclick = () => renameOperationalLayer(proj);
+                btn.ondblclick = () => manageOperationalLayer(proj);
                 
                 // OPERATIONAL LAYER DRAG HANDLERS INTEGRATED
                 btn.classList.add('draggable-layer');
@@ -945,6 +726,102 @@
 
         renderAssigneeList();
         updateEditFormDropdowns();
+    }
+
+    // INTERACTIVE TABS & OPERATIONAL LAYERS OPTIONS PANEL CONFIGURATION
+    function manageOperationalLayer(layerName) {
+        const action = prompt(`Configure Tab Layer "${layerName}":\nType "RENAME" to change text nomenclature configuration.\nType "DELETE" to clear this category pathway completely.`).trim().toUpperCase();
+        
+        if (action === "RENAME") {
+            const newName = prompt(`Enter new Layer validation header name for "${layerName}":`, layerName);
+            if (!newName || newName.trim() === "" || newName.trim() === layerName) return;
+            const cleanName = newName.trim();
+
+            if (appProjects.includes(cleanName)) {
+                alert("Layer index variant parameter combination error: already registered.");
+                return;
+            }
+
+            takeHistorySnapshot();
+            let index = appProjects.indexOf(layerName);
+            if (index !== -1) {
+                appProjects[index] = cleanName;
+                projectColors[cleanName] = projectColors[layerName] || '#6366f1';
+                delete projectColors[layerName];
+            }
+            allEvents.forEach(ev => { if (ev.project === layerName) ev.project = cleanName; });
+            if (currentTab === layerName) currentTab = cleanName;
+            
+            saveData(); initUI(); updateView(); buildWikiDirectory();
+        } 
+        else if (action === "DELETE") {
+            if (!confirm(`Are you completely sure you want to delete "${layerName}"? All matching structural workspace tasks inside this layout block will be safely removed.`)) return;
+            
+            takeHistorySnapshot();
+            appProjects = appProjects.filter(p => p !== layerName);
+            delete projectColors[layerName];
+            allEvents = allEvents.filter(ev => ev.project !== layerName);
+            if (currentTab === layerName) currentTab = "All Projects";
+            
+            saveData(); initUI(); updateView(); buildWikiDirectory();
+        }
+    }
+
+    // INTERACTIVE SIDEBAR OPERATOR MODIFICATION UTILITY
+    function manageOperator(personName) {
+        const action = prompt(`Configure Sidebar Operator "${personName}":\nType "RENAME" to modify tracking string identity.\nType "COLOR" to update system color assignments.\nType "DELETE" to purge this operator profile block.`).trim().toUpperCase();
+        
+        if (action === "RENAME") {
+            const newName = prompt(`Enter new unique validation identity for "${personName}":`, personName);
+            if (!newName || newName.trim() === "" || newName.trim().toUpperCase() === personName) return;
+            const upperName = newName.trim().toUpperCase();
+
+            if (assigneeOrder.includes(upperName)) {
+                alert("Operator variant assignment structural matching error: entry path duplicate.");
+                return;
+            }
+
+            takeHistorySnapshot();
+            let index = assigneeOrder.indexOf(personName);
+            if (index !== -1) assigneeOrder[index] = upperName;
+            
+            team[upperName] = team[personName] || '#999999';
+            delete team[personName];
+            
+            if (activeAssignees.has(personName)) {
+                activeAssignees.delete(personName);
+                activeAssignees.add(upperName);
+            }
+            allEvents.forEach(ev => {
+                ev.assignees = ev.assignees.map(a => a === personName ? upperName : a);
+            });
+
+            saveData(); initUI(); updateView();
+        } 
+        else if (action === "COLOR") {
+            const newColor = prompt(`Enter new Hex background styling color assignment for "${personName}" (e.g. #3b82f6):`, team[personName]);
+            if (!newColor || newColor.trim() === "" || newColor.trim() === team[personName]) return;
+            
+            takeHistorySnapshot();
+            team[personName] = newColor.trim();
+            saveData(); initUI(); updateView();
+        } 
+        else if (action === "DELETE") {
+            if (!confirm(`Are you sure you want to completely purge operator metadata trace patterns for "${personName}"? This profile path clearing removes their allocation constraints.`)) return;
+            
+            takeHistorySnapshot();
+            assigneeOrder = assigneeOrder.filter(a => a !== personName);
+            delete team[personName];
+            activeAssignees.delete(personName);
+            
+            allEvents.forEach(ev => {
+                ev.assignees = ev.assignees.filter(a => a !== personName);
+            });
+            // Clean up any loose items with zero assignees safely
+            allEvents = allEvents.filter(ev => ev.assignees.length > 0);
+
+            saveData(); initUI(); updateView();
+        }
     }
 
     // LAYER DRAG CONTEXT MANAGEMENT DEFINITIONS
@@ -982,37 +859,6 @@
     function handleLayerDragEnd() {
         this.classList.remove('dragging-layer');
         draggedLayerName = null;
-    }
-
-    function renameOperationalLayer(oldName) {
-        const newName = prompt(`Modify Operational Layer Name configuration for "${oldName}":`, oldName);
-        if (!newName || newName.trim() === "" || newName.trim() === oldName) return;
-        const cleanName = newName.trim();
-
-        if (appProjects.includes(cleanName)) {
-            alert("Layer parameter variation already registered.");
-            return;
-        }
-
-        takeHistorySnapshot();
-
-        let layerIndex = appProjects.indexOf(oldName);
-        if (layerIndex !== -1) {
-            appProjects[layerIndex] = cleanName;
-            projectColors[cleanName] = projectColors[oldName] || '#6366f1';
-            delete projectColors[oldName];
-        }
-
-        allEvents.forEach(ev => {
-            if (ev.project === oldName) ev.project = cleanName;
-        });
-
-        if (currentTab === oldName) currentTab = cleanName;
-
-        saveData();
-        initUI();
-        updateView();
-        buildWikiDirectory();
     }
 
     function getPriorityWeight(priorityString) {
@@ -1148,6 +994,10 @@
             item.addEventListener('dragover', handleDragOver);
             item.addEventListener('drop', handleDrop);
             item.addEventListener('dragend', handleDragEnd);
+            
+            // ALLOW MANAGEMENT TRIGGERS VIA DOUBLE CLICK ACTIONS
+            item.addEventListener('ondblclick', (e) => { e.preventDefault(); manageOperator(person); });
+            item.ondblclick = () => manageOperator(person);
 
             const labelWrap = document.createElement('label');
             labelWrap.style.display = 'flex';
@@ -1294,7 +1144,7 @@
                 
                 let dayBg = "#1e1e1e";
                 if (isToday) {
-                    dayBg = "rgba(239, 188, 64, 0.08)"; // Subtle brand gold tint for today's column
+                    dayBg = "rgba(239, 188, 64, 0.08)"; 
                 } else if (dateStr === "2026-05-28") {
                     dayBg = "#1e293b"; 
                 }
