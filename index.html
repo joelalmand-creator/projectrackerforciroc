@@ -71,6 +71,8 @@
     .nav-controls { display: flex; align-items: center; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 1px; }
     .nav-arrow { background: none; border: none; font-size: 10px; cursor: pointer; color: #555; padding: 3px 6px; border-radius: 2px; transition: 0.2s;}
     .nav-arrow:hover { background: var(--c-parchment); color: var(--c-black); }
+    .nav-today { background: none; border: none; border-left: 1px solid #ccc; border-right: 1px solid #ccc; font-size: 9px; font-weight: bold; cursor: pointer; color: #333; padding: 3px 8px; text-transform: uppercase; transition: 0.2s; }
+    .nav-today:hover { background: var(--c-parchment); color: var(--c-black); }
     .nav-label { font-size: 10px; font-weight: bold; color: #333; margin: 0; min-width: 140px; text-align: center; }
 
     .view-toggles { display: flex; background: #eee; border-radius: 4px; padding: 2px; }
@@ -309,6 +311,7 @@
             </div>
             <div class="nav-controls" id="nav-controls" style="display: flex;">
                 <button class="nav-arrow" onclick="navigateTime(-1)">◀</button>
+                <button class="nav-today" onclick="navigateToToday()">Today</button>
                 <span id="nav-label" class="nav-label">Fri 5/29 - Fri 5/29</span>
                 <button class="nav-arrow" onclick="navigateTime(1)">▶</button>
             </div>
@@ -955,7 +958,7 @@
                 wikiPriorities[title] = prioritySelect.value;
                 saveData();
                 buildWikiDirectory(); 
-                updateView(); // Update tooltip priorities on modification
+                updateView(); 
             };
 
             selectorsGrid.appendChild(statusSelect);
@@ -969,7 +972,7 @@
             input.oninput = () => {
                 wikiExplainerData[title] = input.value;
                 saveData();
-                updateView(); // Update tooltip notes on modification
+                updateView(); 
             };
 
             card.appendChild(titleRow);
@@ -1085,6 +1088,19 @@
         updateView(); 
     }
 
+    function navigateToToday() {
+        if (currentViewMode === 'day') {
+            viewAnchorDate = new Date(systemToday);
+        } else if (currentViewMode === 'week' || currentViewMode === 'all') {
+            // Anchor to the Monday of current system week (May 25, 2026)
+            viewAnchorDate = new Date("2026-05-25T00:00:00");
+        } else if (currentViewMode === 'month') {
+            // Anchor to the start of the current system month (May 1, 2026)
+            viewAnchorDate = new Date("2026-05-01T00:00:00");
+        }
+        updateView();
+    }
+
     function getBackground(assignees, type, transparency = 1, project = null) {
         if (colorByProject && project) return hexToRgba(projectColors[project] || '#999999', transparency);
         if (assignees && assignees.length > 0) return hexToRgba(team[assignees[0]] || '#e2e8f0', transparency);
@@ -1180,11 +1196,9 @@
                     el.style.background = getBackground(ev.assignees, ev.type, 1, ev.project);
                     el.style.color = "#fff";
                     
-                    // Fetch dynamic priority and project notes mapping data safely
                     let currentPriority = wikiPriorities[ev.title] || 'Low';
                     let currentNote = wikiExplainerData[ev.title] || 'No notes recorded.';
                     
-                    // Updated tooltip data mapping parameters
                     el.title = `Task: ${ev.title}\nLayer: ${ev.project}\nPriority: ${currentPriority}\nNotes: ${currentNote}`;
                     
                     el.onclick = () => openModal(ev.id);
@@ -1419,19 +1433,16 @@
 
     function toggleMultiSelect() { document.getElementById('multi-select-panel').classList.toggle('open'); }
     
-    // FIX 1: Modal Dropdown "Clear All" function mapping setup
     function clearMultiSelect() { 
         document.querySelectorAll('#multi-select-checkboxes input').forEach(c => c.checked = false); 
     }
     
-    // FIX 2: Sidebar Operators "Clear All" logic implementation
     function clearAllAssignees() {
         activeAssignees.clear();
         renderAssigneeList();
         updateView();
     }
     
-    // Bonus inclusion helper for balanced UX logic validation parity: Select All
     function selectAllAssignees() {
         assigneeOrder.forEach(person => activeAssignees.add(person));
         renderAssigneeList();
