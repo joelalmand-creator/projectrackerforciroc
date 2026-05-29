@@ -59,7 +59,12 @@
 
     .tabs-container { display: flex; align-items: center; gap: 8px; width: 100%; overflow: hidden; }
     .tabs { display: flex; gap: 4px; overflow-x: auto; flex-shrink: 1; white-space: nowrap; padding-bottom: 0;}
+    
+    /* DRAGGABLE TAB STYLES */
     .tab { flex-shrink: 0; padding: 5px 10px; background: #f4f5f7; border: 1px solid #ddd; border-bottom: none; border-radius: 4px 4px 0 0; cursor: pointer; font-size: 11px; font-weight: bold; color: #666; transition: 0.2s; user-select: none; }
+    .tab.draggable-layer { cursor: grab; }
+    .tab.draggable-layer:active { cursor: grabbing; }
+    .tab.dragging-layer { opacity: 0.4; border: 1px dashed var(--c-saddle); }
     .tab:hover { background: var(--c-saddle); color: var(--c-white); border-color: var(--c-saddle); }
     .tab.active { background: white; color: var(--c-black); border-bottom: 1px solid white; margin-bottom: -1px; z-index: 2; position: relative; border-top: 2px solid var(--c-saddle);}
 
@@ -486,8 +491,9 @@
     let isDarkMode = true;
     let colorByProject = true;
 
-    // Drag tracking variable
+    // Drag tracking variables
     let draggedPersonName = null;
+    let draggedLayerName = null;
 
     // ===========================================
     // UNDO / REDO MAC CORE ARCHITECTURE STACK ENGINE
@@ -693,6 +699,8 @@
         if(isDarkMode) document.body.classList.add('dark-mode'); else document.body.classList.remove('dark-mode');
 
         const tabsDiv = document.getElementById('project-tabs'); tabsDiv.innerHTML = '';
+        
+        // RENDER MASTER COMBINED tabs ARRAY SYSTEM
         ['All Projects', ...appProjects].forEach(proj => {
             const btn = document.createElement('button'); 
             btn.className = `tab ${proj === currentTab ? 'active' : ''}`; 
@@ -701,12 +709,59 @@
             
             if(proj !== 'All Projects') {
                 btn.ondblclick = () => renameOperationalLayer(proj);
+                
+                // OPERATIONAL LAYER DRAG HANDLERS INTEGRATED
+                btn.classList.add('draggable-layer');
+                btn.setAttribute('draggable', 'true');
+                btn.setAttribute('data-layer', proj);
+                
+                btn.addEventListener('dragstart', handleLayerDragStart);
+                btn.addEventListener('dragover', handleLayerDragOver);
+                btn.addEventListener('drop', handleLayerDrop);
+                btn.addEventListener('dragend', handleLayerDragEnd);
             }
             tabsDiv.appendChild(btn);
         });
 
         renderAssigneeList();
         updateEditFormDropdowns();
+    }
+
+    // LAYER DRAG CONTEXT MANAGEMENT DEFINITIONS
+    function handleLayerDragStart(e) {
+        draggedLayerName = this.getAttribute('data-layer');
+        this.classList.add('dragging-layer');
+        e.dataTransfer.effectAllowed = 'move';
+    }
+    
+    function handleLayerDragOver(e) {
+        if (e.preventDefault) e.preventDefault();
+        return false;
+    }
+    
+    function handleLayerDrop(e) {
+        e.stopPropagation();
+        const targetLayerName = this.getAttribute('data-layer');
+        
+        if(draggedLayerName && draggedLayerName !== targetLayerName) {
+            takeHistorySnapshot();
+            
+            const fromIdx = appProjects.indexOf(draggedLayerName);
+            const toIdx = appProjects.indexOf(targetLayerName);
+            
+            appProjects.splice(fromIdx, 1);
+            appProjects.splice(toIdx, 0, draggedLayerName);
+            
+            saveData();
+            initUI();
+            updateView();
+        }
+        return false;
+    }
+    
+    function handleLayerDragEnd() {
+        this.classList.remove('dragging-layer');
+        draggedLayerName = null;
     }
 
     function renameOperationalLayer(oldName) {
@@ -861,7 +916,6 @@
         if (panel.style.display === 'flex') buildWikiDirectory();
     }
 
-    // UPDATED ASSIGNEE RENDER SYSTEM TO SUPPORT NATIVE DRAG EVENTS
     function renderAssigneeList() {
         const listDiv = document.getElementById('assignee-list'); listDiv.innerHTML = '';
         assigneeOrder.forEach((person, index) => {
@@ -870,7 +924,6 @@
             item.setAttribute('draggable', 'true');
             item.setAttribute('data-name', person);
 
-            // Drag Event Hooks
             item.addEventListener('dragstart', handleDragStart);
             item.addEventListener('dragover', handleDragOver);
             item.addEventListener('drop', handleDrop);
@@ -903,7 +956,6 @@
         });
     }
 
-    // DRAG-AND-DROP WORKFLOW HANDLER UTILITIES
     function handleDragStart(e) {
         draggedPersonName = this.getAttribute('data-name');
         this.classList.add('dragging');
@@ -925,7 +977,6 @@
             const fromIndex = assigneeOrder.indexOf(draggedPersonName);
             const toIndex = assigneeOrder.indexOf(targetPersonName);
             
-            // Reposition name token inside array layout
             assigneeOrder.splice(fromIndex, 1);
             assigneeOrder.splice(toIndex, 0, draggedPersonName);
             
@@ -1080,7 +1131,6 @@
             let checkedOperators = []; 
             document.querySelectorAll('#edit-assignees input:checked').forEach(cb => checkedOperators.push(cb.value));
 
-            // MULTI-INSTANCE INTERACTIVE SYNC ENGINE:
             if(ev.recurrenceGroupId) {
                 let updateAll = confirm("This item belongs to a recurring series. Would you like to update ALL instances across the 2026 track?");
                 if(updateAll) {
@@ -1097,7 +1147,6 @@
                 }
             }
 
-            // Normal processing fallback or single instance conversion
             ev.title = newTitle;
             ev.project = newProject;
             ev.type = newType;
@@ -1110,7 +1159,6 @@
             let yearEnd = new Date("2026-12-31T00:00:00");
 
             if (pattern !== 'none') {
-                // Generate a unique token grouping ID for tracking loop elements
                 let groupId = "group_" + Date.now();
                 ev.recurrenceGroupId = groupId;
 
