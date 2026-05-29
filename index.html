@@ -392,7 +392,7 @@
                     <select id="edit-recurrence">
                         <option value="none">One-Time Event (No Loop Replication)</option>
                         <option value="daily">Repeat Daily (Runs through end of 2026)</option>
-                        <option value="weekly">Repeat Weekly (Falls on same day of week through 2026)</option>
+                        <option value="weekly">Repeat Weekly (Runs through end of 2026)</option>
                         <option value="monthly">Repeat Monthly (Runs through end of 2026)</option>
                         <option value="quarterly">Repeat Quarterly (Runs through end of 2026)</option>
                     </select>
@@ -818,6 +818,7 @@
             allEvents.forEach(ev => {
                 ev.assignees = ev.assignees.filter(a => a !== personName);
             });
+            // Clean up any loose items with zero assignees safely
             allEvents = allEvents.filter(ev => ev.assignees.length > 0);
 
             saveData(); initUI(); updateView();
@@ -861,6 +862,127 @@
         draggedLayerName = null;
     }
 
+    function getPriorityWeight(priorityString) {
+        if (priorityString === 'Critical') return 4;
+        if (priorityString === 'High') return 3;
+        if (priorityString === 'Always-On') return 2;
+        return 1; 
+    }
+
+    function buildWikiDirectory() {
+        const target = document.getElementById('wiki-content-area');
+        target.innerHTML = '';
+        let uniqueTitles = [...new Set(allEvents.map(e => e.title))];
+
+        uniqueTitles.sort((a, b) => {
+            let pA = wikiPriorities[a] || 'Low';
+            let pB = wikiPriorities[b] || 'Low';
+            return getPriorityWeight(pB) - getPriorityWeight(pA);
+        });
+
+        uniqueTitles.forEach(title => {
+            let matchingEvent = allEvents.find(e => e.title === title);
+            let fallbackColor = (matchingEvent) ? projectColors[matchingEvent.project] : '#999';
+
+            const card = document.createElement('div');
+            card.className = 'wiki-project-card';
+            card.style.borderLeftColor = fallbackColor;
+            
+            const titleRow = document.createElement('div');
+            titleRow.className = 'wiki-project-title-row';
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'wiki-project-title';
+            titleDiv.innerText = title;
+
+            const linkEmoji = document.createElement('button');
+            linkEmoji.className = 'wiki-deck-link-emoji';
+            linkEmoji.innerText = '🔗 Edit Link';
+            
+            linkEmoji.onclick = () => {
+                let currentUrl = wikiLinks[title] || '';
+                let promptInput = prompt(`Assign Asset Deck Link URL parameters for "${title}":`, currentUrl);
+                if (promptInput !== null) {
+                    takeHistorySnapshot();
+                    wikiLinks[title] = promptInput;
+                    saveData();
+                    buildWikiDirectory();
+                }
+            };
+
+            titleRow.appendChild(titleDiv);
+            titleRow.appendChild(linkEmoji);
+
+            let targetUrl = wikiLinks[title];
+            if(targetUrl && targetUrl.trim() !== "") {
+                const launchBtn = document.createElement('a');
+                launchBtn.className = 'wiki-launch-btn';
+                launchBtn.innerText = 'Launch Deck ↗';
+                launchBtn.href = targetUrl.startsWith('http') ? targetUrl : 'https://' + targetUrl;
+                launchBtn.target = '_blank';
+                titleRow.appendChild(launchBtn);
+            }
+
+            const selectorsGrid = document.createElement('div');
+            selectorsGrid.className = 'wiki-meta-selectors-grid';
+
+            const statusSelect = document.createElement('select');
+            statusSelect.className = 'wiki-dropdown-field';
+            statusSelect.innerHTML = `
+                <option value="Not Started">幕 Not Started</option>
+                <option value="In Progress">⚡ In Progress</option>
+                <option value="Reviewing">👁️ Reviewing</option>
+                <option value="Completed">✅ Completed</option>
+            `;
+            statusSelect.value = wikiStatuses[title] || 'Not Started';
+            statusSelect.onchange = () => {
+                takeHistorySnapshot();
+                wikiStatuses[title] = statusSelect.value;
+                saveData();
+            };
+
+            const prioritySelect = document.createElement('select');
+            prioritySelect.className = 'wiki-dropdown-field';
+            prioritySelect.innerHTML = `
+                <option value="Critical">🔥 Critical</option>
+                <option value="High">⚡ High</option>
+                <option value="Always-On">🔄 Always-On</option>
+                <option value="Low">📋 Low</option>
+            `;
+            prioritySelect.value = wikiPriorities[title] || 'Low';
+            prioritySelect.onchange = () => {
+                takeHistorySnapshot();
+                wikiPriorities[title] = prioritySelect.value;
+                saveData();
+                buildWikiDirectory(); 
+            };
+
+            selectorsGrid.appendChild(statusSelect);
+            selectorsGrid.appendChild(prioritySelect);
+
+            const input = document.createElement('textarea');
+            input.className = 'wiki-project-desc-input';
+            input.placeholder = "Click here to add notes/explanations for this deliverable goal parameter...";
+            input.value = wikiExplainerData[title] || '';
+            
+            input.oninput = () => {
+                wikiExplainerData[title] = input.value;
+                saveData();
+            };
+
+            card.appendChild(titleRow);
+            card.appendChild(selectorsGrid);
+            card.appendChild(input);
+            target.appendChild(card);
+        });
+    }
+
+    function toggleWikiPanel() {
+        const panel = document.getElementById('wiki-panel');
+        panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+        if (panel.style.display === 'flex') buildWikiDirectory();
+    }
+
     function renderAssigneeList() {
         const listDiv = document.getElementById('assignee-list'); listDiv.innerHTML = '';
         assigneeOrder.forEach((person, index) => {
@@ -874,6 +996,7 @@
             item.addEventListener('drop', handleDrop);
             item.addEventListener('dragend', handleDragEnd);
             
+            // ALLOW MANAGEMENT TRIGGERS VIA DOUBLE CLICK ACTIONS
             item.addEventListener('ondblclick', (e) => { e.preventDefault(); manageOperator(person); });
             item.ondblclick = () => manageOperator(person);
 
@@ -1055,13 +1178,6 @@
                     el.style.background = getBackground(ev.assignees, ev.type, 1, ev.project);
                     el.style.color = "#fff";
                     el.onclick = () => openModal(ev.id);
-                    
-                    let explainerText = wikiExplainerData[ev.title] || '';
-                    let statusText = wikiStatuses[ev.title] || 'Not Started';
-                    let priorityText = wikiPriorities[ev.title] || 'Low';
-                    
-                    el.title = `Task: ${ev.title}\nLayer: ${ev.project}\nStatus: ${statusText} | Priority: ${priorityText}${explainerText ? '\n\nNote: ' + explainerText : ''}`;
-                    
                     content.appendChild(el);
                 }
             });
@@ -1292,7 +1408,26 @@
     }
 
     function toggleMultiSelect() { document.getElementById('multi-select-panel').classList.toggle('open'); }
-    function clearMultiSelect() { document.querySelectorAll('#multi-select-checkboxes input').forEach(c => c.checked = false); }
+    
+    // FIX 1: Modal Dropdown "Clear All" function mapping setup
+    function clearMultiSelect() { 
+        document.querySelectorAll('#multi-select-checkboxes input').forEach(c => c.checked = false); 
+    }
+    
+    // FIX 2: Sidebar Operators "Clear All" logic implementation
+    function clearAllAssignees() {
+        activeAssignees.clear();
+        renderAssigneeList();
+        updateView();
+    }
+    
+    // Bonus inclusion helper for balanced UX logic validation parity: Select All
+    function selectAllAssignees() {
+        assigneeOrder.forEach(person => activeAssignees.add(person));
+        renderAssigneeList();
+        updateView();
+    }
+
     function filterAssignees() {} 
     function addNewMultiSelectAssignee() {}
     function toggleSettings() {
@@ -1356,132 +1491,6 @@
         saveData();
         initUI();
         updateView();
-    }
-
-    function selectAllAssignees() {
-        assigneeOrder.forEach(p => activeAssignees.add(p));
-        initUI();
-        updateView();
-    }
-
-    function clearAllAssignees() {
-        activeAssignees.clear();
-        initUI();
-        updateView();
-    }
-
-    function buildWikiDirectory() {
-        const target = document.getElementById('wiki-content-area');
-        target.innerHTML = '';
-        let uniqueTitles = [...new Set(allEvents.map(e => e.title))];
-
-        uniqueTitles.sort((a, b) => {
-            let pA = wikiPriorities[a] || 'Low';
-            let pB = wikiPriorities[b] || 'Low';
-            return getPriorityWeight(pB) - getPriorityWeight(pA);
-        });
-
-        uniqueTitles.forEach(title => {
-            let matchingEvent = allEvents.find(e => e.title === title);
-            let fallbackColor = (matchingEvent) ? projectColors[matchingEvent.project] : '#999';
-
-            const card = document.createElement('div');
-            card.className = 'wiki-project-card';
-            card.style.borderLeftColor = fallbackColor;
-            
-            const titleRow = document.createElement('div');
-            titleRow.className = 'wiki-project-title-row';
-            
-            const titleDiv = document.createElement('div');
-            titleDiv.className = 'wiki-project-title';
-            titleDiv.innerText = title;
-
-            const linkEmoji = document.createElement('button');
-            linkEmoji.className = 'wiki-deck-link-emoji';
-            linkEmoji.innerText = '🔗 Edit Link';
-            
-            linkEmoji.onclick = () => {
-                let currentUrl = wikiLinks[title] || '';
-                let promptInput = prompt(`Assign Asset Deck Link URL parameters for "${title}":`, currentUrl);
-                if (promptInput !== null) {
-                    takeHistorySnapshot();
-                    wikiLinks[title] = promptInput;
-                    saveData();
-                    buildWikiDirectory();
-                }
-            };
-
-            titleRow.appendChild(titleDiv);
-            titleRow.appendChild(linkEmoji);
-
-            let targetUrl = wikiLinks[title];
-            if(targetUrl && targetUrl.trim() !== "") {
-                const launchBtn = document.createElement('a');
-                launchBtn.className = 'wiki-launch-btn';
-                launchBtn.innerText = 'Launch Deck ↗';
-                launchBtn.href = targetUrl.startsWith('http') ? targetUrl : 'https://' + targetUrl;
-                launchBtn.target = '_blank';
-                titleRow.appendChild(launchBtn);
-            }
-
-            const selectorsGrid = document.createElement('div');
-            selectorsGrid.className = 'wiki-meta-selectors-grid';
-
-            const statusSelect = document.createElement('select');
-            statusSelect.className = 'wiki-dropdown-field';
-            statusSelect.innerHTML = `
-                <option value="Not Started">幕 Not Started</option>
-                <option value="In Progress">⚡ In Progress</option>
-                <option value="Reviewing">👁️ Reviewing</option>
-                <option value="Completed">✅ Completed</option>
-            `;
-            statusSelect.value = wikiStatuses[title] || 'Not Started';
-            statusSelect.onchange = () => {
-                takeHistorySnapshot();
-                wikiStatuses[title] = statusSelect.value;
-                saveData();
-            };
-
-            const prioritySelect = document.createElement('select');
-            prioritySelect.className = 'wiki-dropdown-field';
-            prioritySelect.innerHTML = `
-                <option value="Critical">🔥 Critical</option>
-                <option value="High">⚡ High</option>
-                <option value="Always-On">🔄 Always-On</option>
-                <option value="Low">📋 Low</option>
-            `;
-            prioritySelect.value = wikiPriorities[title] || 'Low';
-            prioritySelect.onchange = () => {
-                takeHistorySnapshot();
-                wikiPriorities[title] = prioritySelect.value;
-                saveData();
-                buildWikiDirectory(); 
-            };
-
-            selectorsGrid.appendChild(statusSelect);
-            selectorsGrid.appendChild(prioritySelect);
-
-            const input = document.createElement('textarea');
-            input.className = 'wiki-project-desc-input';
-            input.placeholder = "Click here to add notes/explanations for this deliverable goal parameter...";
-            input.value = wikiExplainerData[title] || '';
-            
-            input.oninput = () => {
-                wikiExplainerData[title] = input.value;
-                saveData();
-            };
-
-            card.appendChild(titleRow);
-            card.appendChild(selectorsGrid);
-            card.appendChild(input);
-            target.appendChild(card);
-        });
-    }
-
-    function toggleWikiPanel() {
-        const panel = document.getElementById('wiki-panel');
-        panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
-        if (panel.style.display === 'flex') buildWikiDirectory();
     }
 
     window.onload = () => { loadSavedData(); };
