@@ -392,6 +392,7 @@
                     <select id="edit-recurrence">
                         <option value="none">One-Time Event (No Loop Replication)</option>
                         <option value="daily">Repeat Daily (Runs through end of 2026)</option>
+                        <option value="weekly">Repeat Weekly (Falls on same day of week through 2026)</option>
                         <option value="monthly">Repeat Monthly (Runs through end of 2026)</option>
                         <option value="quarterly">Repeat Quarterly (Runs through end of 2026)</option>
                     </select>
@@ -1132,6 +1133,7 @@
                 let currentLoopDate = new Date(ev.start + 'T00:00:00');
                 
                 if (pattern === 'daily') currentLoopDate.setDate(currentLoopDate.getDate() + 1);
+                if (pattern === 'weekly') currentLoopDate.setDate(currentLoopDate.getDate() + 7);
                 if (pattern === 'monthly') currentLoopDate.setMonth(currentLoopDate.getMonth() + 1);
                 if (pattern === 'quarterly') currentLoopDate.setMonth(currentLoopDate.getMonth() + 3);
 
@@ -1153,6 +1155,7 @@
                     });
 
                     if (pattern === 'daily') currentLoopDate.setDate(currentLoopDate.getDate() + 1);
+                    if (pattern === 'weekly') currentLoopDate.setDate(currentLoopDate.getDate() + 7);
                     if (pattern === 'monthly') currentLoopDate.setMonth(currentLoopDate.getMonth() + 1);
                     if (pattern === 'quarterly') currentLoopDate.setMonth(currentLoopDate.getMonth() + 3);
                 }
@@ -1355,7 +1358,6 @@
         updateView();
     }
 
-    // NEW EXPLICIT ASSIGNEE MUTATORS INTEGRATED HERE:
     function selectAllAssignees() {
         assigneeOrder.forEach(p => activeAssignees.add(p));
         initUI();
