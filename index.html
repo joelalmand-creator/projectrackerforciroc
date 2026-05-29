@@ -303,7 +303,7 @@
         <div class="top-bar-left">
             <button class="hamburger-btn" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
             <div class="view-toggles" id="view-toggles">
-                <button class="view-btn active" id="v-all" onclick="setViewMode('all')">Master Horizon</button>
+                <button class="view-btn" id="v-all" onclick="setViewMode('all')">Master Horizon</button>
                 <button class="view-btn" id="v-month" onclick="setViewMode('month')">Month</button>
                 <button class="view-btn" id="v-week" onclick="setViewMode('week')">Week View</button>
                 <button class="view-btn" id="v-day" onclick="setViewMode('day')">Day Focus</button>
@@ -483,9 +483,9 @@
     let allEvents = [...defaultEventsRaw];
     let scratchItems = []; 
     
-    // Core Parameters
-    let currentViewMode = 'day'; 
-    let currentTab = 'All Projects';
+    // Core Parameters Setup
+    let currentViewMode = 'all'; // Forced Master Horizon default state initialization trigger 
+    let currentTab = 'All Projects'; // Forced All Projects layout layer initialization parameter
     let systemToday = new Date(); 
     let viewAnchorDate = new Date(); 
     let currentEditingEventId = null;
@@ -602,14 +602,17 @@
             appProjects = [...defaultProjects];
         }
 
-        // Setup dynamic initial view anchor around true today (Monday of current week)
+        // Fresh page-load forced fallback system sequence logic settings
+        currentViewMode = 'all'; 
+        currentTab = 'All Projects'; 
+
         let currentDayOfWeek = systemToday.getDay();
         let distanceToMonday = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
         viewAnchorDate = new Date(systemToday);
         viewAnchorDate.setDate(systemToday.getDate() + distanceToMonday);
 
         initUI();
-        updateView();
+        setViewMode('all'); // Explicit logic to set active UI buttons accurately
         buildWikiDirectory();
         renderScratchpad();
         
@@ -625,13 +628,7 @@
         if(!value) return;
 
         takeHistorySnapshot(); 
-
-        scratchItems.push({
-            id: Date.now(),
-            text: value,
-            completed: false
-        });
-
+        scratchItems.push({ id: Date.now(), text: value, completed: false });
         input.value = '';
         saveData();
         renderScratchpad();
@@ -1127,7 +1124,6 @@
         
         let headerHtml = '<div class="grid-cell">Operators</div>';
         let dayLabels = [];
-        
         const todayStr = getDateStringForInput(systemToday);
 
         for (let i = 0; i < totalDays; i++) {
