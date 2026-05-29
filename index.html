@@ -1055,7 +1055,6 @@
                     el.style.color = "#fff";
                     el.onclick = () => openModal(ev.id);
                     
-                    // NEW DYNAMIC WIKI INFORMATION HOVER TOOLTIP INJECTED HERE:
                     let explainerText = wikiExplainerData[ev.title] || '';
                     let statusText = wikiStatuses[ev.title] || 'Not Started';
                     let priorityText = wikiPriorities[ev.title] || 'Low';
@@ -1352,6 +1351,19 @@
         appProjects.push(cleanName);
         projectColors[cleanName] = "#" + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
         saveData();
+        initUI();
+        updateView();
+    }
+
+    // NEW EXPLICIT ASSIGNEE MUTATORS INTEGRATED HERE:
+    function selectAllAssignees() {
+        assigneeOrder.forEach(p => activeAssignees.add(p));
+        initUI();
+        updateView();
+    }
+
+    function clearAllAssignees() {
+        activeAssignees.clear();
         initUI();
         updateView();
     }
