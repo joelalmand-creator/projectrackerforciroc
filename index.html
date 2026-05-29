@@ -955,6 +955,7 @@
                 wikiPriorities[title] = prioritySelect.value;
                 saveData();
                 buildWikiDirectory(); 
+                updateView(); // Update tooltip priorities on modification
             };
 
             selectorsGrid.appendChild(statusSelect);
@@ -968,6 +969,7 @@
             input.oninput = () => {
                 wikiExplainerData[title] = input.value;
                 saveData();
+                updateView(); // Update tooltip notes on modification
             };
 
             card.appendChild(titleRow);
@@ -1177,6 +1179,14 @@
                     el.style.gridColumn = `${gridStart} / span ${spanCount}`;
                     el.style.background = getBackground(ev.assignees, ev.type, 1, ev.project);
                     el.style.color = "#fff";
+                    
+                    // Fetch dynamic priority and project notes mapping data safely
+                    let currentPriority = wikiPriorities[ev.title] || 'Low';
+                    let currentNote = wikiExplainerData[ev.title] || 'No notes recorded.';
+                    
+                    // Updated tooltip data mapping parameters
+                    el.title = `Task: ${ev.title}\nLayer: ${ev.project}\nPriority: ${currentPriority}\nNotes: ${currentNote}`;
+                    
                     el.onclick = () => openModal(ev.id);
                     content.appendChild(el);
                 }
